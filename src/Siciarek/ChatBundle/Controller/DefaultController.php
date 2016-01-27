@@ -24,6 +24,8 @@ class DefaultController extends Controller
      */
     public function indexAction($type = 1)
     {
-        return self::getAd($type, $this->container);
+        return [
+            
+        ];
     }
 }
