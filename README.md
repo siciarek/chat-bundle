@@ -4,6 +4,7 @@ SiciarekChatBundle
 Simple chat.
 
 
+
 ## Installation
 
 https://github.com/siciarek/ad-rotator-bundle/blob/master/src/Siciarek/ChatBundle/Resources/doc/references/installation.rst
