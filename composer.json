@@ -21,7 +21,8 @@
         "symfony/framework-bundle": "~2.3|~3.0",
         "symfony/serializer": "~2.0|~3.0",
         "symfony/console": "~2.3|~3.0",
-        "willdurand/jsonp-callback-validator": "~1.0"
+        "stof/doctrine-extensions-bundle": "dev-master", 
+        "knplabs/doctrine-behaviors": "dev-master"
     },
     "minimum-stability": "dev",
     "require-dev": {
@@ -37,7 +38,8 @@
 
         "raulfraile/ladybug-bundle": "dev-master",
         "willdurand/faker-bundle": "@stable",
-        "sensio/generator-bundle": "~2.3"   },
+        "sensio/generator-bundle": "~2.3"
+    },
     "autoload": {
         "psr-0": { "Siciarek\\ChatBundle": "src/" }
     },
