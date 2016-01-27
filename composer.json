@@ -1,0 +1,47 @@
+{
+    "name": "siciarek/chat-bundle",
+    "type": "library",
+    "description": "Simple chat bundle",
+    "keywords": [
+        "symfony2",
+        "bundle",
+        "chat",
+        "simple chat"
+    ],
+    "homepage": "http://github.com/siciarek/chat-bundle.git",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jacek Siciarek",
+            "email": "siciarek@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "symfony/framework-bundle": "~2.3|~3.0",
+        "symfony/serializer": "~2.0|~3.0",
+        "symfony/console": "~2.3|~3.0",
+        "willdurand/jsonp-callback-validator": "~1.0"
+    },
+    "minimum-stability": "dev",
+    "require-dev": {
+        "instaclick/php-webdriver": "~1.1",
+        "behat/behat": "~3.0.6",
+        "behat/mink-extension": "*",
+        "behat/mink": "*",
+
+        "behat/mink-goutte-driver": "*",
+        "behat/mink-selenium2-driver": "*",
+        "behat/mink-sahi-driver": "*",
+        "behat/mink-zombie-driver": "*",
+
+        "raulfraile/ladybug-bundle": "dev-master",
+        "willdurand/faker-bundle": "@stable",
+        "sensio/generator-bundle": "~2.3"   },
+    "autoload": {
+        "psr-0": { "Siciarek\\ChatBundle": "src/" }
+    },
+    "bin": [
+
+    ]
+}

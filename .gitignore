@@ -1,0 +1,46 @@
+# VCS
+.git
+
+/bin
+__pycache__
+properties.cnf
+
+/src/Application
+# PHPStorm
+.idea
+.DS_Store
+
+# Eclipse
+.settings
+.buildpath
+.project
+
+/temp
+
+composer.phar
+composer.lock
+
+web/config.php
+
+vendor
+
+*~
+composer.phar
+composer.lock
+
+# Bootstrap
+app/bootstrap*
+
+# Symfony directories
+/vendor
+*/logs/*
+*/cache/*
+/app
+/web
+
+# Configuration files
+app/config/parameters.ini
+app/config/parameters.yml
+
+config/config.yml
+bin/xbehat/gherkin/i18n.json

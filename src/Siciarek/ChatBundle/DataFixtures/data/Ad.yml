@@ -1,0 +1,66 @@
+---
+Ad:
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Hello World!
+        title: ~
+        leads_to: ~
+        uploaded_file: 06.swf
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Hello World!
+        title: ~
+        leads_to: ~
+        uploaded_file: 05.svg
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Hello World!
+        title: ~
+        leads_to: http://yahoo.com
+        uploaded_file: 01.png
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Hello World!
+        title: ~
+        leads_to: ~
+        uploaded_file: 04.gif
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Hello World!
+        title: ~
+        leads_to: http://sescom.pl
+        uploaded_file: 04.gif
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Go Johnny Go!
+        title: ~
+        leads_to: ~
+        uploaded_file: 02.jpg
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Go Johnny Go!
+        title: ~
+        leads_to: ~
+        uploaded_file: 03.jpeg
+    -
+        enabled: true
+        type: 1
+        option: 1
+        client: Go Johnny Go!
+        title: ~
+        leads_to: http://moronet.pl
+        uploaded_file: 05.svg
