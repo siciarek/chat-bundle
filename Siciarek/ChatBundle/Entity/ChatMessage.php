@@ -27,9 +27,9 @@ class ChatMessage {
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ChatRoom", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="ChatChannel", inversedBy="messages")
      */
-    private $room;
+    private $channel;
 
     /**
      * @ORM\Column(type="text")

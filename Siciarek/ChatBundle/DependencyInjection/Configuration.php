@@ -12,6 +12,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+
     /**
      * {@inheritDoc}
      */
@@ -23,7 +24,12 @@ class Configuration implements ConfigurationInterface
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
-
+        $rootNode->children()
+                ->scalarNode('update_interval')->defaultValue(5000)->end()
+                ->scalarNode('number_of_messages')->defaultValue(10)->end()
+        ->end();
+        
         return $treeBuilder;
     }
+
 }

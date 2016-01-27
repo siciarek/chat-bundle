@@ -7,13 +7,13 @@ use Knp\DoctrineBehaviors\Model as ORMBehaviors;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * Siciarek\ChatBundle\Entity\ChatRoom
+ * Siciarek\ChatBundle\Entity\ChatChannel
  *
  * @ORM\Entity
  * @ORM\Table(name="chat_room")
- * @ORM\Entity(repositoryClass="ChatRoomRepository")
+ * @ORM\Entity(repositoryClass="ChatChannelRepository")
  */
-class ChatRoom {
+class ChatChannel {
 
     use ORMBehaviors\Blameable\Blameable;
     use ORMBehaviors\Timestampable\Timestampable;
