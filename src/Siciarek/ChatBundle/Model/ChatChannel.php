@@ -8,11 +8,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
 use Siciarek\ChatBundle\Entity\ChatChannelAssignee as Assignee;
 
-class ChatChannelException extends \Exception {
+class ChatChannelException extends \Exception
+{
+
     public function __construct($message = "", $code = 0, \Exception $previous = null)
     {
         parent::__construct($message, 4561237, $previous);
     }
+
 }
 
 class ChatChannel implements ContainerAwareInterface
@@ -33,15 +36,16 @@ class ChatChannel implements ContainerAwareInterface
         return $this->em->getRepository('SiciarekChatBundle:ChatChannel');
     }
 
-    protected function addUrl($channel)
+    protected function addUrls($channel)
     {
-        $url = $this->getContainer()->get('router')->generate('chat.message.list', [
-            'channel' => $channel['id'],
-                ], true);
+        $ret = [
+            'urls' => [
+                'messages' => $this->getContainer()->get('router')->generate('chat.message.list', ['channel' => $channel['id'],], true),
+                'assignees' => $this->getContainer()->get('router')->generate('chat.channel.assignee.list', ['channel' => $channel['id'],], true),
+            ],
+        ];
 
-        $channel['url'] = $url;
-
-        return $channel;
+        return array_merge($ret, $channel);
     }
 
     protected function getQueryBuilder()
@@ -87,15 +91,21 @@ class ChatChannel implements ContainerAwareInterface
         $this->em->flush();
 
 // TODO: use serializer
+
+        return $this->getDetails($channel->getId());
+    }
+
+    protected function getDetails($id)
+    {
+
         $qb = $this->getQueryBuilder()
                 ->select('o, a')
                 ->leftJoin('o.assignees', 'a')
                 ->andWhere('o.id = :id')
-                ->setParameter('id', $channel->getId());
+                ->setParameter('id', $id);
 
         $result = $qb->getQuery()->getSingleResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-
-        $result = $this->addUrl($result);
+        $result = $this->addUrls($result);
 
         return $result;
     }
@@ -121,17 +131,16 @@ class ChatChannel implements ContainerAwareInterface
                 ->setParameters($params)
         ;
         $query = $qb->getQuery();
-        
+
         try {
             $obj = $query->getSingleResult();
             $this->em->remove($obj);
             $this->em->flush();
-            
         } catch (\Doctrine\ORM\NoResultException $e) {
             throw new ChatChannelException('Channel is alerady closed.');
         }
 
-        
+
         return true;
     }
 
@@ -160,6 +169,8 @@ class ChatChannel implements ContainerAwareInterface
 
         $items = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
+        $items = array_map([$this, 'addUrls'], $items);
+        
         return $items;
     }
 

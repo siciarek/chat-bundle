@@ -21,7 +21,7 @@ class ChatController extends CommonController
 {
 
     /**
-     * @Route("/channel/{channel}/assignees", defaults={"_format":"json"}, name="chat.channel.assignees")
+     * @Route("/channel/{channel}/assignees", defaults={"_format":"json"}, name="chat.channel.assignee.list")
      */
     public function channelAssigneesAction(Request $request, $channel)
     {
