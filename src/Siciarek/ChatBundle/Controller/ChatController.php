@@ -29,16 +29,6 @@ class ChatController extends Controller
     }
     
     /**
-     * @Route("/channel/{channel}/assign", defaults={"_format":"json"}, name="chat.channel.assign")
-     */
-    public function channelAssignAction(Request $request, $channel)
-    {
-        $data = [__FUNCTION__, $channel];
-        
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
-    }
-    
-    /**
      * @Route("/channel/{channel}/join", defaults={"_format":"json"}, name="chat.channel.join")
      */
     public function channelJoinAction(Request $request, $channel)
@@ -57,7 +47,28 @@ class ChatController extends Controller
         
         return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }
-    
+
+# ------------------------------------------------------------------------------
+
+    /**
+     * @Route("/channel/list", defaults={"_format":"json"}, name="chat.channel.list")
+     */
+    public function channelListAction(Request $request)
+    {
+        $data = [__FUNCTION__];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
+   
+    /**
+     * @Route("/channel/{channel}/create", defaults={"_format":"json"}, name="chat.channel.create")
+     */
+    public function channelCreateAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
     
     /**
      * @Route("/channel/{channel}/close", defaults={"_format":"json"}, name="chat.channel.close")
