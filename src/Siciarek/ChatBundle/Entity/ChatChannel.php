@@ -54,5 +54,157 @@ class ChatChannel {
     private $closedAt;
 
 
-}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->assignees = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return ChatChannel
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return ChatChannel
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set closedAt
+     *
+     * @param \DateTime $closedAt
+     * @return ChatChannel
+     */
+    public function setClosedAt($closedAt)
+    {
+        $this->closedAt = $closedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get closedAt
+     *
+     * @return \DateTime 
+     */
+    public function getClosedAt()
+    {
+        return $this->closedAt;
+    }
+
+    /**
+     * Add messages
+     *
+     * @param \Siciarek\ChatBundle\Entity\ChatMessage $messages
+     * @return ChatChannel
+     */
+    public function addMessage(\Siciarek\ChatBundle\Entity\ChatMessage $messages)
+    {
+        $this->messages[] = $messages;
+
+        return $this;
+    }
+
+    /**
+     * Remove messages
+     *
+     * @param \Siciarek\ChatBundle\Entity\ChatMessage $messages
+     */
+    public function removeMessage(\Siciarek\ChatBundle\Entity\ChatMessage $messages)
+    {
+        $this->messages->removeElement($messages);
+    }
+
+    /**
+     * Get messages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
+    /**
+     * Add assignees
+     *
+     * @param \Siciarek\ChatBundle\Entity\ChatChannelAssignee $assignees
+     * @return ChatChannel
+     */
+    public function addAssignee(\Siciarek\ChatBundle\Entity\ChatChannelAssignee $assignees)
+    {
+        $this->assignees[] = $assignees;
+
+        return $this;
+    }
+
+    /**
+     * Remove assignees
+     *
+     * @param \Siciarek\ChatBundle\Entity\ChatChannelAssignee $assignees
+     */
+    public function removeAssignee(\Siciarek\ChatBundle\Entity\ChatChannelAssignee $assignees)
+    {
+        $this->assignees->removeElement($assignees);
+    }
+
+    /**
+     * Get assignees
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAssignees()
+    {
+        return $this->assignees;
+    }
+}
