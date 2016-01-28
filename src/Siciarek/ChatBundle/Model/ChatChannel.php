@@ -21,11 +21,26 @@ class ChatChannel implements ContainerAwareInterface
      */
     protected $container;
 
+    protected function getRepo()
+    {
+        return $this->em->getRepository('SiciarekChatBundle:ChatChannel');
+    }
+
+    protected function addUrl($channel)
+    {
+        $url = $this->getContainer()->get('router')->generate('chat.message.list', [
+            'channel' => $channel['id'],
+                ], true);
+
+        $channel['url'] = $url;
+
+        return $channel;
+    }
+
     protected function getQueryBuilder()
     {
-        $repo = $this->em->getRepository('SiciarekChatBundle:ChatChannel');
-
-        $qb = $repo->createQueryBuilder('o')
+        $qb = $this->getRepo()
+                ->createQueryBuilder('o')
                 ->andWhere('o.deletedAt is NULL')
         ;
 
@@ -39,25 +54,41 @@ class ChatChannel implements ContainerAwareInterface
      * @param UserInterface $creator
      * @return \Siciarek\ChatBundle\Entity\ChatChannel
      */
-    public function create($name, UserInterface $creator, $type = Channel::TYPE_PUBLIC)
+    public function create($name, UserInterface $creator, $type = Channel::TYPE_PUBLIC, $assignees = [])
     {
 
         $channel = new Channel();
         $channel->setName($name);
         $channel->setType($type);
 
-        $a = new Assignee();
-        $a->setAssigneeClass(get_class($creator));
-        $a->setAssigneeId($creator->getId());
+        array_unshift($assignees, $creator);
 
-        $channel->addAssignee($a);
+        foreach ($assignees as $assignee) {
+            $a = new Assignee();
+            $a->setAssigneeClass(get_class($assignee));
+            $a->setAssigneeId($assignee->getId());
+
+            $channel->addAssignee($a);
+
+            // Private chanel is only for two persons
+            if ($type === Channel::TYPE_PRIVATE and $assignee === $assignees[1]) {
+                break;
+            }
+        }
 
         $this->em->persist($channel);
         $this->em->flush();
 
         // TODO: use serializer
-        $qb = $this->getQueryBuilder()->andWhere('o.id = :id')->setParameter('id', $channel->getId());
+        $qb = $this->getQueryBuilder()
+                ->select('o, a')
+                ->leftJoin('o.assignees', 'a')
+                ->andWhere('o.id = :id')
+                ->setParameter('id', $channel->getId());
+
         $result = $qb->getQuery()->getSingleResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        $result = $this->addUrl($result);
 
         return $result;
     }
@@ -84,10 +115,12 @@ class ChatChannel implements ContainerAwareInterface
         ;
         $query = $qb->getQuery();
 
-        $result = $query->getSingleResult();
+        $result = $query->getResult();
 
-        $this->em->remove($result);
-        $this->em->flush();
+        if (count($result) > 0) {
+            $this->em->remove($result);
+            $this->em->flush();
+        }
 
         return true;
     }

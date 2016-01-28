@@ -13,16 +13,23 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(name="chat_channel")
  * @ORM\Entity(repositoryClass="ChatChannelRepository")
  */
-class ChatChannel {
+class ChatChannel
+{
 
-    const TYPE_PRIVATE =  'private';
-    const TYPE_PUBLIC =  'public';
-    const TYPE_PROTECTED =  'protected';
-    
-    
-    use ORMBehaviors\Blameable\Blameable;
-    use ORMBehaviors\Timestampable\Timestampable;
-    use ORMBehaviors\SoftDeletable\SoftDeletable;
+    const NAME_MAX_LENGTH = 32;
+    const TYPE_PRIVATE = 'private';
+    const TYPE_PUBLIC = 'public';
+    const TYPE_PROTECTED = 'protected';
+
+    public static $types = [
+        self::TYPE_PRIVATE,
+        self::TYPE_PUBLIC,
+        self::TYPE_PROTECTED,
+    ];
+
+    use ORMBehaviors\Blameable\Blameable,
+        ORMBehaviors\Timestampable\Timestampable,
+        ORMBehaviors\SoftDeletable\SoftDeletable;
 
     /**
      * @ORM\Id
@@ -57,7 +64,6 @@ class ChatChannel {
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $closedAt;
-
 
     /**
      * Constructor
@@ -214,4 +220,5 @@ class ChatChannel {
     {
         return $this->assignees;
     }
+
 }

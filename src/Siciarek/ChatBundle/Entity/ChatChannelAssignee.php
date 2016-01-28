@@ -13,11 +13,12 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(name="chat_channel_assignee")
  * @ORM\Entity(repositoryClass="ChatChannelAssigneRepository")
  */
-class ChatChannelAssignee {
+class ChatChannelAssignee
+{
 
-    use ORMBehaviors\Blameable\Blameable;
-    use ORMBehaviors\Timestampable\Timestampable;
-    use ORMBehaviors\SoftDeletable\SoftDeletable;
+    use ORMBehaviors\Blameable\Blameable,
+        ORMBehaviors\Timestampable\Timestampable,
+        ORMBehaviors\SoftDeletable\SoftDeletable;
 
     /**
      * @ORM\Id
@@ -119,4 +120,5 @@ class ChatChannelAssignee {
     {
         return $this->channel;
     }
+
 }
