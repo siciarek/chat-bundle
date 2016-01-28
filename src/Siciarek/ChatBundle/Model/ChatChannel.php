@@ -39,7 +39,7 @@ class ChatChannel implements ContainerAwareInterface
      * @param UserInterface $creator
      * @return \Siciarek\ChatBundle\Entity\ChatChannel
      */
-    public function create($name, $type, UserInterface $creator)
+    public function create($name, UserInterface $creator, $type = Channel::TYPE_PUBLIC)
     {
 
         $channel = new Channel();
@@ -55,7 +55,11 @@ class ChatChannel implements ContainerAwareInterface
         $this->em->persist($channel);
         $this->em->flush();
 
-        return $channel;
+        // TODO: use serializer
+        $qb = $this->getQueryBuilder()->andWhere('o.id = :id')->setParameter('id', $channel->getId());
+        $result = $qb->getQuery()->getSingleResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        return $result;
     }
 
     /**
@@ -105,6 +109,7 @@ class ChatChannel implements ContainerAwareInterface
                 ->leftJoin('o.assignees', 'a')
                 ->andWhere('a.assigneeId = :assigneeId')
                 ->andWhere('a.assigneeClass = :assigneeClass')
+                ->orderBy('o.createdAt', 'DESC')
                 ->setParameters($params)
         ;
 

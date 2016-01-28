@@ -19,6 +19,11 @@ use Siciarek\ChatBundle\Entity as E;
  */
 class ChatController extends Controller
 {
+    
+    protected function getFrame() {
+        return new \Siciarek\ChatBundle\Model\LaafFrame();
+    }
+    
     /**
      * @Route("/channel/{channel}/assignees", defaults={"_format":"json"}, name="chat.channel.assignees")
      */
@@ -58,17 +63,8 @@ class ChatController extends Controller
     {
         $items = $this->get('chat.channel')->getList($this->getUser());
         
-        $data = [
-            'success' => true,
-            'type' => 'data',
-            'datetime' => date('Y-m-d H:i:s'),
-            'msg' => 'Channels',
-            'data' => [
-                'totalCount' => count($items),
-                'items' => $items,
-            ],
-        ];
-        
+        $data = $this->getFrame()->getDataFrame('Channels', $items);
+                
         return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }
    
@@ -77,12 +73,9 @@ class ChatController extends Controller
      */
     public function channelCreateAction(Request $request, $channel)
     {
-        $channel = $this->get('chat.channel')->create($channel, E\ChatChannel::TYPE_PUBLIC, $this->getUser());
+        $item = $this->get('chat.channel')->create($channel, $this->getUser());
         
-        $data = [
-            'id' => $channel->getId(),
-            'name' => $channel->getName(),
-        ];
+        $data = $this->getFrame()->getInfoFrame('OK', $item);
         
         return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }
