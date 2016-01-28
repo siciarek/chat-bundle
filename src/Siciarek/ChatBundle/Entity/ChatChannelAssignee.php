@@ -7,13 +7,13 @@ use Knp\DoctrineBehaviors\Model as ORMBehaviors;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * Siciarek\ChatBundle\Entity\ChatMessage
+ * Siciarek\ChatBundle\Entity\ChatChannelAssignee
  *
  * @ORM\Entity
- * @ORM\Table(name="chat_message")
- * @ORM\Entity(repositoryClass="ChatMessageRepository")
+ * @ORM\Table(name="chat_channel_assignee")
+ * @ORM\Entity(repositoryClass="ChatChannelAssigneRepository")
  */
-class ChatMessage {
+class ChatChannelAssignee {
 
     use ORMBehaviors\Blameable\Blameable;
     use ORMBehaviors\Timestampable\Timestampable;
@@ -27,13 +27,18 @@ class ChatMessage {
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ChatChannel", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="ChatChannel", inversedBy="assignees")
      */
     private $channel;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="integer")
      */
-    private $content;
+    private $assigneeId;
+
+    /**
+     * @ORM\Column()
+     */
+    private $assigneeClass;
 }
 

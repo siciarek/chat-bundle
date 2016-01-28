@@ -2,13 +2,17 @@
 .git
 
 /bin
-__pycache__
 properties.cnf
 
-/src/Application
+/src/Siciarek/ChatBundle/Controller/DefaultControler.php
+/src/Siciarek/ChatBundle/Entity/User.php
+/src/Siciarek/ChatBundle/Entity/Group.php
+/src/Siciarek/ChatBundle/Resource/views/Default
+
 # PHPStorm
 .idea
 .DS_Store
+nbproject
 
 # Eclipse
 .settings
@@ -44,3 +48,5 @@ app/config/parameters.yml
 
 config/config.yml
 bin/xbehat/gherkin/i18n.json
+/nbproject/private/
+/src/Siciarek/ChatBundle/Resources/views/Default/
