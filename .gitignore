@@ -19,7 +19,7 @@ extra.bat
 
 /app
 /web
-
+/build.xml
 /src/Siciarek/ChatBundle/Controller/DefaultController.php
 /src/Siciarek/ChatBundle/Resources/views/Default
 /src/Siciarek/ChatBundle/DataFixtures
