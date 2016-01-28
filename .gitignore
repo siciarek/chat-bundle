@@ -1,0 +1,77 @@
+nbproject
+.idea
+php.ini
+/temp*
+
+/utils/dumpdb/dumpdb.cnf
+/utils/dumpdb/extra
+/utils/dumpdb/extra.bat
+/utils/dumpdb/*.sql
+
+/behat.yml
+/pbehat.yml
+sync
+sync.bat
+go
+go.bat
+extra
+extra.bat
+
+/src/Application/MainBundle/tmp
+/src/Application/MainBundle/Controller/TestController.php
+/src/Application/MainBundle/Resources/views/Test
+/src/Application/MainBundle/Resources/views/Dummy
+/src/Application/MainBundle/Controller/DummyController.php
+/src/Application/MainBundle/Command/DummyCommand.php
+
+# Cache and logs (Symfony2)
+/app/*.db3
+/app/cache/*
+/app/logs/*
+!app/cache/.gitkeep
+!app/logs/.gitkeep
+
+# Cache and logs (Symfony3)
+/var/cache/*
+/var/logs/*
+!var/cache/.gitkeep
+!var/logs/.gitkeep
+
+# Parameters
+/app/config/parameters.yml
+/app/config/parameters.ini
+
+# Managed by Composer
+/app/bootstrap.php.cache
+/var/bootstrap.php.cache
+/bin/*
+!bin/console
+!bin/symfony_requirements
+/vendor
+/vendor.*/
+
+# Assets and user uploads
+/web/phpdoc/
+/web/bundles/
+/web/uploads/
+/web/js
+/web/css
+/web/images
+/web/temp*
+/web/coverage
+/web/info.php
+/web/cache
+
+# PHPUnit
+/app/phpunit.xml
+/phpunit.xml
+
+# Build data
+/build/
+
+# Composer PHAR
+/composer.phar
+#/composer.lock
+
+/properties.conf
+/nbproject/private/
