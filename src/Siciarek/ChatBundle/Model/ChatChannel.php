@@ -8,6 +8,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
 use Siciarek\ChatBundle\Entity\ChatChannelAssignee as Assignee;
 
+class ChatChannelException extends \Exception {
+    public function __construct($message = "", $code = 0, \Exception $previous = null)
+    {
+        parent::__construct($message, 4561237, $previous);
+    }
+}
+
 class ChatChannel implements ContainerAwareInterface
 {
 
@@ -70,7 +77,7 @@ class ChatChannel implements ContainerAwareInterface
 
             $channel->addAssignee($a);
 
-            // Private chanel is only for two persons
+// Private chanel is only for two persons
             if ($type === Channel::TYPE_PRIVATE and $assignee === $assignees[1]) {
                 break;
             }
@@ -79,7 +86,7 @@ class ChatChannel implements ContainerAwareInterface
         $this->em->persist($channel);
         $this->em->flush();
 
-        // TODO: use serializer
+// TODO: use serializer
         $qb = $this->getQueryBuilder()
                 ->select('o, a')
                 ->leftJoin('o.assignees', 'a')
@@ -114,14 +121,17 @@ class ChatChannel implements ContainerAwareInterface
                 ->setParameters($params)
         ;
         $query = $qb->getQuery();
-
-        $result = $query->getResult();
-
-        if (count($result) > 0) {
-            $this->em->remove($result);
+        
+        try {
+            $obj = $query->getSingleResult();
+            $this->em->remove($obj);
             $this->em->flush();
+            
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            throw new ChatChannelException('Channel is alerady closed.');
         }
 
+        
         return true;
     }
 

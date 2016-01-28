@@ -10,20 +10,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Symfony\Component\HttpFoundation\Request;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 
 /**
  * @Route("/api")
  */
-class ChatController extends Controller
+class ChatController extends CommonController
 {
-
-    protected function getFrame()
-    {
-        return new \Siciarek\ChatBundle\Model\LaafFrame();
-    }
 
     /**
      * @Route("/channel/{channel}/assignees", defaults={"_format":"json"}, name="chat.channel.assignees")
@@ -77,27 +72,27 @@ class ChatController extends Controller
         $name = $request->get('name', $this->getUser()->getUsername());
         $type = $request->get('type', Channel::TYPE_PRIVATE);
         $assigneesIds = json_decode($request->get('assignees', '[]'));
-        
+
         // Validate and sanitize input:
         $name = trim($name);
-        if(strlen($name) === 0) {
+        if (strlen($name) === 0) {
             $name = $this->getUser()->getUsername();
         }
         $name = substr($name, 0, Channel::NAME_MAX_LENGTH);
         $name = trim($name);
-         
-        if(!in_array($type,  Channel::$types)) {
+
+        if (!in_array($type, Channel::$types)) {
             throw $this->createNotFoundException();
         }
-        
-        if(!is_array($assigneesIds)) {
+
+        if (!is_array($assigneesIds)) {
             throw $this->createNotFoundException();
         }
         $assigneesIds = array_map('intval', $assigneesIds);
         $assigneesIds = array_unique($assigneesIds);
-        $assigneesIds = array_values(array_filter($assigneesIds, function($e){
-            return intval($e) > 0;
-        }));
+        $assigneesIds = array_values(array_filter($assigneesIds, function($e) {
+                    return intval($e) > 0;
+                }));
 
         // Convert ids to entities:
         $class = get_class($this->getUser());
@@ -109,10 +104,10 @@ class ChatController extends Controller
         }, $assigneesIds);
 
         // Sanitize entities list:
-        $assignees = array_values(array_filter($assignees, function($e){
-            return $e != null;
-        }));
-        
+        $assignees = array_values(array_filter($assignees, function($e) {
+                    return $e != null;
+                }));
+
         $item = $this->get('chat.channel')->create(
                 $name, $this->getUser(), $type, $assignees
         );
@@ -127,13 +122,13 @@ class ChatController extends Controller
      */
     public function channelCloseAction(Request $request, $channel)
     {
-        $result = $this->get('chat.channel')->close($channel, $this->getUser());
+        $run = function() use ($channel) {
+            $this->get('chat.channel')->close($channel, $this->getUser());
+            
+            return $this->getFrame()->getInfoFrame();
+        };
 
-        $data = [
-            'result' => $result,
-        ];
-
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+        return $this->handleJsonAction($run);
     }
 
 # ------------------------------------------------------------------------------
