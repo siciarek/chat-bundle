@@ -8,16 +8,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
 use Siciarek\ChatBundle\Entity\ChatChannelAssignee as Assignee;
 
-class ChatChannelException extends \Exception
-{
-
-    public function __construct($message = "", $code = 0, \Exception $previous = null)
-    {
-        parent::__construct($message, 4561237, $previous);
-    }
-
-}
-
 class ChatChannel implements ContainerAwareInterface
 {
 
@@ -36,6 +26,17 @@ class ChatChannel implements ContainerAwareInterface
         return $this->em->getRepository('SiciarekChatBundle:ChatChannel');
     }
 
+    public function find($id) {
+        
+        try {
+            $obj = $this->getRepo()->find($id);
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            throw new ChatChannelException('Channel not exist.', 4561237 + 2);
+        }
+        
+        return $obj;
+    }
+    
     protected function addUrls($channel)
     {
         $ret = [

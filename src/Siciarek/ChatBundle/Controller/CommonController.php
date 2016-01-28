@@ -11,6 +11,7 @@ abstract class CommonController extends Controller
 
     public static $customExceptions = [
         'Siciarek\ChatBundle\Model\ChatChannelException',
+        'Siciarek\ChatBundle\Model\ChatMessageException',
     ];
 
     protected function getFrame()

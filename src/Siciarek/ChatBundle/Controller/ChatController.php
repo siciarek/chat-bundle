@@ -12,6 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
+use Siciarek\ChatBundle\Model\ChatMessageException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 
 /**
@@ -25,9 +26,33 @@ class ChatController extends CommonController
      */
     public function channelAssigneesAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $run = function() use ($request, $channel) {
+            $channel = $this->get('chat.channel')->find($channel);
+            $items = [];
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+            if ($channel instanceof Channel) {
+                $class = null;
+
+                $ids = array_map(function($e) use (&$class) {
+                    $class = $e->getAssigneeClass();
+                    return $e->getAssigneeId();
+                }, $channel->getAssignees()->toArray());
+
+                $qb = $this->get('doctrine.orm.entity_manager')
+                        ->getRepository($class)
+                        ->createQueryBuilder('u')
+                        ->select('u.id, u.usernameCanonical, u.emailCanonical')
+                        ->andWhere('u.id IN (:ids)')
+                        ->setParameters(['ids' => $ids])
+                ;
+                
+                $items = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+            }
+
+            return $this->getFrame()->getDataFrame('Assignees', $items);
+        };
+
+        return $this->handleJsonAction($run);
     }
 
     /**
@@ -57,11 +82,13 @@ class ChatController extends CommonController
      */
     public function channelListAction(Request $request)
     {
-        $items = $this->get('chat.channel')->getList($this->getUser());
+        $run = function() use ($request) {
+            $items = $this->get('chat.channel')->getList($this->getUser());
 
-        $data = $this->getFrame()->getDataFrame('Channels', $items);
+            return $this->getFrame()->getDataFrame('Channels', $items);
+        };
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+        return $this->handleJsonAction($run);
     }
 
     /**
@@ -69,52 +96,57 @@ class ChatController extends CommonController
      */
     public function channelCreateAction(Request $request)
     {
-        $name = $request->get('name', $this->getUser()->getUsername());
-        $type = $request->get('type', Channel::TYPE_PRIVATE);
-        $assigneesIds = json_decode($request->get('assignees', '[]'));
 
-        // Validate and sanitize input:
-        $name = trim($name);
-        if (strlen($name) === 0) {
-            $name = $this->getUser()->getUsername();
-        }
-        $name = substr($name, 0, Channel::NAME_MAX_LENGTH);
-        $name = trim($name);
+        $run = function() use ($request) {
 
-        if (!in_array($type, Channel::$types)) {
-            throw $this->createNotFoundException();
-        }
 
-        if (!is_array($assigneesIds)) {
-            throw $this->createNotFoundException();
-        }
-        $assigneesIds = array_map('intval', $assigneesIds);
-        $assigneesIds = array_unique($assigneesIds);
-        $assigneesIds = array_values(array_filter($assigneesIds, function($e) {
-                    return intval($e) > 0;
-                }));
+            $name = $request->get('name', $this->getUser()->getUsername());
+            $type = $request->get('type', Channel::TYPE_PRIVATE);
+            $assigneesIds = json_decode($request->get('assignees', '[]'));
 
-        // Convert ids to entities:
-        $class = get_class($this->getUser());
-        $assignees = array_map(function($id) use ($class) {
-            return $this->get('doctrine.orm.entity_manager')
-                            ->getRepository($class)
-                            ->findOneById(intval($id))
-            ;
-        }, $assigneesIds);
+            // Validate and sanitize input:
+            $name = trim($name);
+            if (strlen($name) === 0) {
+                $name = $this->getUser()->getUsername();
+            }
+            $name = substr($name, 0, Channel::NAME_MAX_LENGTH);
+            $name = trim($name);
 
-        // Sanitize entities list:
-        $assignees = array_values(array_filter($assignees, function($e) {
-                    return $e != null;
-                }));
+            if (!in_array($type, Channel::$types)) {
+                throw $this->createNotFoundException();
+            }
 
-        $item = $this->get('chat.channel')->create(
-                $name, $this->getUser(), $type, $assignees
-        );
+            if (!is_array($assigneesIds)) {
+                throw $this->createNotFoundException();
+            }
+            $assigneesIds = array_map('intval', $assigneesIds);
+            $assigneesIds = array_unique($assigneesIds);
+            $assigneesIds = array_values(array_filter($assigneesIds, function($e) {
+                        return intval($e) > 0;
+                    }));
 
-        $data = $this->getFrame()->getInfoFrame('OK', $item);
+            // Convert ids to entities:
+            $class = get_class($this->getUser());
+            $assignees = array_map(function($id) use ($class) {
+                return $this->get('doctrine.orm.entity_manager')
+                                ->getRepository($class)
+                                ->findOneById(intval($id))
+                ;
+            }, $assigneesIds);
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+            // Sanitize entities list:
+            $assignees = array_values(array_filter($assignees, function($e) {
+                        return $e != null;
+                    }));
+
+            $item = $this->get('chat.channel')->create(
+                    $name, $this->getUser(), $type, $assignees
+            );
+
+            return $this->getFrame()->getInfoFrame('OK', $item);
+        };
+
+        return $this->handleJsonAction($run);
     }
 
     /**
@@ -124,7 +156,7 @@ class ChatController extends CommonController
     {
         $run = function() use ($channel) {
             $this->get('chat.channel')->close($channel, $this->getUser());
-            
+
             return $this->getFrame()->getInfoFrame();
         };
 
@@ -138,9 +170,13 @@ class ChatController extends CommonController
      */
     public function messageListAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $run = function() use ($request, $channel) {
+            $items = $this->get('chat.message')->getList($channel, $this->getUser());
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+            return $this->getFrame()->getDataFrame('Messages', $items);
+        };
+
+        return $this->handleJsonAction($run);
     }
 
     /**
@@ -148,9 +184,21 @@ class ChatController extends CommonController
      */
     public function messageAppendAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $run = function() use ($request, $channel) {
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+            $message = $request->get('message');
+            $message = trim($message);
+
+            if (strlen($message) === 0) {
+                throw new ChatMessageException('Message can not be empty.');
+            }
+
+            $this->get('chat.message')->send($message, $channel);
+
+            return $this->getFrame()->getInfoFrame();
+        };
+
+        return $this->handleJsonAction($run);
     }
 
 }
