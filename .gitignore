@@ -22,6 +22,7 @@ extra.bat
 
 /src/Siciarek/ChatBundle/Controller/DefaultController.php
 /src/Siciarek/ChatBundle/Resources/views/Default
+/src/Siciarek/ChatBundle/DataFixtures
 
 /src/Application/MainBundle
 
