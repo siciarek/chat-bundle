@@ -1,0 +1,12 @@
+fos_user:
+    db_driver:      orm # can be orm or odm
+    firewall_name:  main
+    user_class:     Siciarek\ChatBundle\Entity\User
+
+    group:
+        group_class:   Siciarek\ChatBundle\Entity\Group
+
+        
+    registration:
+        confirmation:
+            enabled: false

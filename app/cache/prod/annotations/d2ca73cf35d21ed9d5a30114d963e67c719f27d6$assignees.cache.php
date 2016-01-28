@@ -1,0 +1,1 @@
+<?php return unserialize('a:2:{i:0;O:28:"Doctrine\\ORM\\Mapping\\OrderBy":1:{s:5:"value";a:1:{s:9:"createdAt";s:4:"DESC";}}i:1;O:30:"Doctrine\\ORM\\Mapping\\OneToMany":6:{s:8:"mappedBy";s:7:"channel";s:12:"targetEntity";s:19:"ChatChannelAssignee";s:7:"cascade";a:1:{i:0;s:3:"all";}s:5:"fetch";s:4:"LAZY";s:13:"orphanRemoval";b:1;s:7:"indexBy";N;}}');

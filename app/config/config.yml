@@ -1,0 +1,91 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+    - { resource: friendsofsymfony/user-bundle.yml }
+    - { resource: twig.yml }
+    - { resource: ../../vendor/knplabs/doctrine-behaviors/config/orm-services.yml }
+    
+# Put parameters here that don't need to change on each machine where the app is deployed
+# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+
+framework:
+    #esi:             ~
+    translator:      { fallbacks: ["%locale%"] }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    #serializer:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+        #assets_version: SomeVersionScheme
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        cookie_lifetime: %app_session_cookie_lifetime%
+        gc_maxlifetime: %app_session_gc_maxlifetime%
+        handler_id: %app_session_handler% 
+    fragments:       ~
+    http_method_override: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+
+# Assetic Configuration
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+    bundles:        [ ]
+
+# Doctrine Configuration
+
+doctrine:
+    dbal:
+        default_connection: default
+        types:
+            json: Doctrine\DBAL\Types\JsonArrayType
+        connections:
+            default:
+                path:     "%database_path%"
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
+                charset:  UTF8
+    
+    orm:
+#        resolve_target_entities:
+#           Cunningsoft\ChatBundle\Entity\AuthorInterface: Application\Sonata\UserBundle\Entity\User
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            default:
+                connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: false
+                mappings:
+                    FOSUserBundle: ~
+                    SiciarekChatBundle: ~
+
+# Swiftmailer Configuration
+swiftmailer:
+    encryption: "%mailer_encryption%"
+    auth_mode:  "%mailer_auth_mode%"
+    transport:  "%mailer_transport%"
+    host:       "%mailer_host%"
+    port:       "%mailer_port%"
+    username:   "%mailer_user%"
+    password:   "%mailer_password%"
+#    spool:     { type: memory }
+    spool:
+        type: file
+        path: %kernel.cache_dir%/swiftmailer/spool
