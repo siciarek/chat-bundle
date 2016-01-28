@@ -19,12 +19,11 @@ extra.bat
 
 /app
 /web
-/src/Application/MainBundle/tmp
-/src/Application/MainBundle/Controller/TestController.php
-/src/Application/MainBundle/Resources/views/Test
-/src/Application/MainBundle/Resources/views/Dummy
-/src/Application/MainBundle/Controller/DummyController.php
-/src/Application/MainBundle/Command/DummyCommand.php
+
+/src/Siciarek/ChatBundle/Controller/DefaultController.php
+/src/Siciarek/ChatBundle/Resources/views/Default
+
+/src/Application/MainBundle
 
 # Cache and logs (Symfony2)
 /app/*.db3
