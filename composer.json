@@ -52,7 +52,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Siciarek\\ChatBundle": "src/"
+            "Siciarek\\ChatBundle": ""
         }
     },
     "target-dir": "Siciarek/ChatBundle"
