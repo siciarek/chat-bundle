@@ -12,6 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Symfony\Component\HttpFoundation\Request;
+use Siciarek\ChatBundle\Entity as E;
 
 /**
  * @Route("/chat")
@@ -55,7 +56,18 @@ class ChatController extends Controller
      */
     public function channelListAction(Request $request)
     {
-        $data = [__FUNCTION__];
+        $items = $this->get('chat.channel')->getList($this->getUser());
+        
+        $data = [
+            'success' => true,
+            'type' => 'data',
+            'datetime' => date('Y-m-d H:i:s'),
+            'msg' => 'Channels',
+            'data' => [
+                'totalCount' => count($items),
+                'items' => $items,
+            ],
+        ];
         
         return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }
@@ -65,7 +77,12 @@ class ChatController extends Controller
      */
     public function channelCreateAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $channel = $this->get('chat.channel')->create($channel, E\ChatChannel::TYPE_PUBLIC, $this->getUser());
+        
+        $data = [
+            'id' => $channel->getId(),
+            'name' => $channel->getName(),
+        ];
         
         return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }
@@ -75,7 +92,11 @@ class ChatController extends Controller
      */
     public function channelCloseAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $result = $this->get('chat.channel')->close($channel, $this->getUser());
+        
+        $data = [
+            'result' => $result,
+        ];
         
         return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }

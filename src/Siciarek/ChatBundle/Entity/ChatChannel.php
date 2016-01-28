@@ -15,6 +15,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class ChatChannel {
 
+    const TYPE_PRIVATE =  'private';
+    const TYPE_PUBLIC =  'public';
+    const TYPE_PROTECTED =  'protected';
+    
+    
     use ORMBehaviors\Blameable\Blameable;
     use ORMBehaviors\Timestampable\Timestampable;
     use ORMBehaviors\SoftDeletable\SoftDeletable;
@@ -162,6 +167,7 @@ class ChatChannel {
      */
     public function removeMessage(\Siciarek\ChatBundle\Entity\ChatMessage $messages)
     {
+        $messages->setChannel($this);
         $this->messages->removeElement($messages);
     }
 
@@ -183,6 +189,7 @@ class ChatChannel {
      */
     public function addAssignee(\Siciarek\ChatBundle\Entity\ChatChannelAssignee $assignees)
     {
+        $assignees->setChannel($this);
         $this->assignees[] = $assignees;
 
         return $this;
