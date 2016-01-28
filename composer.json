@@ -52,11 +52,7 @@
     },
     "autoload": {
         "psr-0": {
-<<<<<<< HEAD:composer.json
             "Siciarek\\ChatBundle": "src/"
-=======
-            "Siciarek\\ChatBundle": ""
->>>>>>> b031d84e572f24cb5fb535cd7e68d4552349bb73:Siciarek/ChatBundle/composer.json
         }
     },
     "target-dir": "Siciarek/ChatBundle"

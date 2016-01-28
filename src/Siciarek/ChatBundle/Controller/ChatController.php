@@ -11,28 +11,83 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/chat")
  */
 class ChatController extends Controller
 {
-
     /**
-     * @Route("/", name="chat.index")
-     * @Template()
+     * @Route("/channel/{channel}/assignees", defaults={"_format":"json"}, name="chat.channel.assignees")
      */
-    public function indexAction($type = 1)
+    public function channelAssigneesAction(Request $request, $channel)
     {
-        $room = $this->get('chat.channel');
-        $msg = $this->get('chat.message');
-        $session = $this->get('session');
-        $user = $this->getUser();
-
-        ld($room, $msg, $session, $user);
+        $data = [__FUNCTION__, $channel];
         
-        return [
-        ];
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
+    
+    /**
+     * @Route("/channel/{channel}/assign", defaults={"_format":"json"}, name="chat.channel.assign")
+     */
+    public function channelAssignAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
+    
+    /**
+     * @Route("/channel/{channel}/join", defaults={"_format":"json"}, name="chat.channel.join")
+     */
+    public function channelJoinAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
     }
 
+    /**
+     * @Route("/channel/{channel}/leave", defaults={"_format":"json"}, name="chat.channel.leave")
+     */
+    public function channelLeaveAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
+    
+    
+    /**
+     * @Route("/channel/{channel}/close", defaults={"_format":"json"}, name="chat.channel.close")
+     */
+    public function channelCloseAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+# ------------------------------------------------------------------------------
+
+    /**
+     * @Route("/{channel}/message/list", defaults={"_format":"json"}, name="chat.message.list")
+     */
+    public function messageListAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * @Route("/{channel}/message/append", defaults={"_format":"json"}, name="chat.message.append")
+     */
+    public function messageAppendAction(Request $request, $channel)
+    {
+        $data = [__FUNCTION__, $channel];
+        
+        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+    }
 }
