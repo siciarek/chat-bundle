@@ -25,7 +25,7 @@ class ChatMessage implements ContainerAwareInterface
     /**
      * @var string
      */
-    protected $dateformat = 'Y-m-d H:i';
+    protected $dateformat;
     
     protected $serializer;
     
@@ -104,7 +104,7 @@ class ChatMessage implements ContainerAwareInterface
     {
         $this->container = $container;
         
-        $this->dateformat = 'Y-m-d H:i:s';
+        $this->dateformat = 'Y-m-d H:i';
         $this->serializer = $this->getContainer()->get('serializer');
         $this->em = $this->getContainer()->get('doctrine.orm.entity_manager');
     }
