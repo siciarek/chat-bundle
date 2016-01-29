@@ -25,7 +25,7 @@ class ChatMessage implements ContainerAwareInterface
     /**
      * @var string
      */
-    protected $dateformat = 'Y-m-d H:i:s';
+    protected $dateformat = 'Y-m-d H:i';
     
     protected $serializer;
     
