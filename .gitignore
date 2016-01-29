@@ -21,13 +21,11 @@ extra.bat
 /app
 /web
 /build.xml
-/src/Siciarek/ChatBundle/Controller/DefaultController.php
-/src/Siciarek/ChatBundle/Resources/views/Default
-/src/Siciarek/ChatBundle/DataFixtures
-/src/Siciarek/ChatBundle/Entity/User.php
-/src/Siciarek/ChatBundle/Entity/Group.php
-
-/src/Application/MainBundle
+/Controller/DefaultController.php
+/Resources/views/Default
+/DataFixtures
+/Entity/User.php
+/Entity/Group.php
 
 # Cache and logs (Symfony2)
 /app/*.db3
