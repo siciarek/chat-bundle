@@ -12,5 +12,6 @@ Simple chat JSON API for Symfony2 projects.
 
 
 ## Authors
+[![JacekSiciarek](/http://1.gravatar.com/avatar/d4b77615f3bd9f43f109bee92c908e01)][https://github.com/siciarek]
 
 [Jacek Siciarek](https://github.com/siciarek)
