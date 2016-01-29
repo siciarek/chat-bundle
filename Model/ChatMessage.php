@@ -86,6 +86,7 @@ class ChatMessage implements ContainerAwareInterface
         $message['channel'] = $message['channel']['id'];
         $message['createdAt'] = date($this->dateformat, strtotime($message['created_at']));
         $message['createdBy'] = $message['created_by'];
+
         unset($message['created_at']);
         unset($message['created_by']);
         unset($message['updated_at']);
