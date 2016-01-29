@@ -180,7 +180,7 @@ class ChatController extends CommonController
     }
 
     /**
-     * @Route("/channel/{channel}/message/append", defaults={"_format":"json"}, name="chat.message.append")
+     * @Route("/channel/{channel}/message/send", defaults={"_format":"json"}, name="chat.message.send")
      */
     public function messageAppendAction(Request $request, $channel)
     {
@@ -193,9 +193,9 @@ class ChatController extends CommonController
                 throw new ChatMessageException('Message can not be empty.');
             }
 
-            $this->get('chat.message')->send($message, $channel);
+            $message = $this->get('chat.message')->send($message, $channel);
 
-            return $this->getFrame()->getInfoFrame();
+            return $this->getFrame()->getInfoFrame('Message', $message); 
         };
 
         return $this->handleJsonAction($run);
