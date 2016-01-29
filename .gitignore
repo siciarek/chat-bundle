@@ -17,6 +17,7 @@ go.bat
 extra
 extra.bat
 
+/src
 /app
 /web
 /build.xml
