@@ -26,27 +26,16 @@ class ChatChannel implements ContainerAwareInterface
         return $this->em->getRepository('SiciarekChatBundle:ChatChannel');
     }
 
-    public function find($id) {
-        
+    public function find($id)
+    {
+
         try {
             $obj = $this->getRepo()->find($id);
         } catch (\Doctrine\ORM\NoResultException $e) {
             throw new ChatChannelException('Channel not exist.', 4561237 + 2);
         }
-        
-        return $obj;
-    }
-    
-    protected function addUrls($channel)
-    {
-        $ret = [
-            'urls' => [
-                'messages' => $this->getContainer()->get('router')->generate('chat.message.list', ['channel' => $channel['id'],], true),
-                'assignees' => $this->getContainer()->get('router')->generate('chat.channel.assignee.list', ['channel' => $channel['id'],], true),
-            ],
-        ];
 
-        return array_merge($ret, $channel);
+        return $obj;
     }
 
     protected function getQueryBuilder()
@@ -60,13 +49,15 @@ class ChatChannel implements ContainerAwareInterface
     }
 
     /**
-     * Creates the new channel
+     * Creates new channel
      * 
-     * @param type $name
      * @param UserInterface $creator
-     * @return \Siciarek\ChatBundle\Entity\ChatChannel
+     * @param array $assignees
+     * @param string $type
+     * @param string $name
+     * @return type
      */
-    public function create($name, UserInterface $creator, $type = Channel::TYPE_PUBLIC, $assignees = [])
+    public function create(UserInterface $creator, $assignees = [], $type = Channel::TYPE_PUBLIC, $name = null)
     {
 
         $channel = new Channel();
@@ -74,6 +65,8 @@ class ChatChannel implements ContainerAwareInterface
         $channel->setType($type);
 
         array_unshift($assignees, $creator);
+
+        $names = [];
 
         foreach ($assignees as $assignee) {
             $a = new Assignee();
@@ -83,15 +76,65 @@ class ChatChannel implements ContainerAwareInterface
             $channel->addAssignee($a);
 
 // Private chanel is only for two persons
+            $names[] = $assignee->getUsername();
+
             if ($type === Channel::TYPE_PRIVATE and $assignee === $assignees[1]) {
                 break;
             }
         }
 
-        $this->em->persist($channel);
-        $this->em->flush();
+        $count = 0;
 
-// TODO: use serializer
+        if ($name === null) {
+
+            $created = true;
+
+            if (count($names) > 3) {
+                $temp = [];
+                $temp[] = array_shift($names);
+                $temp[] = array_shift($names);
+                $temp[] = array_shift($names);
+
+                $count = count($names);
+
+                $names = $temp;
+            }
+
+            sort($names);
+
+            $name = implode(', ', $names);
+        } else {
+            // Validate and sanitize input:
+            $name = trim($name);
+
+            if (strlen($name) === 0) {
+                $name = $this->getUser()->getUsername();
+            }
+        }
+
+        $name = substr($name, 0, Channel::NAME_MAX_LENGTH);
+        $name = trim($name);
+
+        if ($count > 0) {
+            $name .= ' + ' . $count;
+        }
+
+        $result = $this->getQueryBuilder()
+                ->andWhere('o.name = :name')
+                ->setParameters(['name' => $name])
+                ->orderBy('o.createdAt', 'DESC')
+                ->getQuery()
+                ->getResult()
+        ;
+
+        if (count($result) > 0) {
+            $channel = $result[0];
+        } else {
+            $channel->setName($name);
+
+            $this->em->persist($channel);
+            $this->em->flush();
+        }
 
         return $this->getDetails($channel->getId());
     }
@@ -106,7 +149,6 @@ class ChatChannel implements ContainerAwareInterface
                 ->setParameter('id', $id);
 
         $result = $qb->getQuery()->getSingleResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-        $result = $this->addUrls($result);
 
         return $result;
     }
@@ -170,8 +212,6 @@ class ChatChannel implements ContainerAwareInterface
 
         $items = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
-        $items = array_map([$this, 'addUrls'], $items);
-        
         return $items;
     }
 

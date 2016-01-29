@@ -99,18 +99,9 @@ class ChatController extends CommonController
 
         $run = function() use ($request) {
 
-
-            $name = $request->get('name', $this->getUser()->getUsername());
+            $name = $request->get('name', null);
             $type = $request->get('type', Channel::TYPE_PRIVATE);
             $assigneesIds = json_decode($request->get('assignees', '[]'));
-
-            // Validate and sanitize input:
-            $name = trim($name);
-            if (strlen($name) === 0) {
-                $name = $this->getUser()->getUsername();
-            }
-            $name = substr($name, 0, Channel::NAME_MAX_LENGTH);
-            $name = trim($name);
 
             if (!in_array($type, Channel::$types)) {
                 throw $this->createNotFoundException();
@@ -140,7 +131,7 @@ class ChatController extends CommonController
                     }));
 
             $item = $this->get('chat.channel')->create(
-                    $name, $this->getUser(), $type, $assignees
+                    $this->getUser(), $assignees, $type, $name
             );
 
             return $this->getFrame()->getInfoFrame('OK', $item);
