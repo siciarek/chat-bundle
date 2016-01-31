@@ -2,24 +2,99 @@
 
 namespace Siciarek\ChatBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
 use Siciarek\ChatBundle\Model\ChatMessageException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
+use utilphp\util;
 
 /**
  * @Route("/api")
  */
 class ChatController extends CommonController
 {
+
+    protected function getActiveUsersIds()
+    {
+
+        $em = $this->get('doctrine.orm.entity_manager');
+
+        $userClass = $this->container->get('fos_user.user_manager')->getClass();
+        $sessionTable = $this->container->getParameter('pdo.db_options')['db_table'];
+
+        $sql = sprintf('SELECT * FROM %s WHERE data LIKE :like', $sessionTable);
+        $stmt = $em->getConnection()->prepare($sql);
+        $like = '%' . preg_replace('/\\\/', '\\\\\\', $userClass) . '%';
+        $stmt->execute([ 'like' => $like ]);
+        $result = $stmt->fetchAll();
+
+        $ids = [];
+
+        foreach ($result as $r) {
+            $temp = explode('_sf2_', $r['data']);
+            array_shift($temp);
+            $data = array_shift($temp);
+            $data = preg_replace('/^\w+\|/', '', $data);
+            $data = unserialize($data);
+
+            $lifetime = $r['lifetime'];
+            $expired = time() - $r['time'] >= $lifetime;
+
+            foreach ($data as $key => $str) {
+                if (strpos($str, $userClass) !== false and $expired === false) {
+                    $obj = unserialize($str);
+                    $ids[] = $obj->getUser()->getId();
+                }
+            }
+        }
+
+        $ids = array_unique($ids);
+
+        return $ids;
+    }
+
+    /**
+     * @Route("/user/list", name="chat.user.list")
+     */
+    public function userListAction()
+    {
+
+        $run = function() {
+            $em = $this->get('doctrine.orm.entity_manager');
+
+            $userClass = $this->container->get('fos_user.user_manager')->getClass();
+
+            $query = $em
+                    ->getRepository($userClass)
+                    ->createQueryBuilder('u')
+                    ->select('u.id, u.username, u.email')
+                    ->andWhere('u.enabled = true')
+                    ->andWhere('u.username NOT IN (:excluded)')
+                    ->setParameters([
+                        'excluded' => ['system'],
+                    ])
+                    ->getQuery()
+            ;
+
+            $data = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+            $ids = $this->getActiveUsersIds();
+
+            $data = array_map(function($e) use ($ids) {
+                $e['online'] = in_array($e['id'], $ids);
+                $e['image'] = util::get_gravatar($e['email']);
+                return $e;
+            }, $data);
+
+            usort($data, function($a, $b) {
+                return $a['online'] < $b['online'];
+            });
+            
+            return $this->getFrame()->getDataFrame('Users', $data);
+        };
+        return $this->handleJsonAction($run);
+    }
 
     /**
      * @Route("/channel/{channel}/assignees", defaults={"_format":"json"}, name="chat.channel.assignee.list")
@@ -45,7 +120,7 @@ class ChatController extends CommonController
                         ->andWhere('u.id IN (:ids)')
                         ->setParameters(['ids' => $ids])
                 ;
-                
+
                 $items = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
             }
 
@@ -186,7 +261,7 @@ class ChatController extends CommonController
 
             $message = $this->get('chat.message')->send($message, $channel);
 
-            return $this->getFrame()->getInfoFrame('Message', $message); 
+            return $this->getFrame()->getInfoFrame('Message', $message);
         };
 
         return $this->handleJsonAction($run);

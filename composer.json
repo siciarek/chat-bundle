@@ -19,6 +19,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
+        "brandonwamboldt/utilphp": "1.1.*",
         "jms/serializer-bundle": "1.1@dev",
         "jms/security-extra-bundle": "dev-master",
         "friendsofsymfony/user-bundle": "~1.3",
