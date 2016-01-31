@@ -1,0 +1,34 @@
+{% extends 'SiciarekChatBundle::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js') }}"></script>
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js') }}"></script>
+
+    <script>
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="page-header">
+                Sample chat
+                <i class="fa-certificate fa text-muted"></i>
+            </h1>
+            <br/>
+            <p>
+                <em>If you would like to use the chat, click "Chat" in the main menu. Thank you.</em> 
+            </p>
+        </div>
+    </div>
+{% endblock %}

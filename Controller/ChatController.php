@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
 use Siciarek\ChatBundle\Model\ChatMessageException;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use utilphp\util;
 
 /**
@@ -153,6 +154,7 @@ class ChatController extends CommonController
 # ------------------------------------------------------------------------------
 
     /**
+     * @Secure(roles="ROLE_USER")
      * @Route("/channel/list", defaults={"_format":"json"}, name="chat.channel.list")
      */
     public function channelListAction(Request $request)

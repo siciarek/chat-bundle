@@ -21,8 +21,6 @@ extra.bat
 /app
 /web
 /build.xml
-/Controller/DefaultController.php
-/Resources/views/Default
 /DataFixtures
 /Entity/User.php
 /Entity/Group.php

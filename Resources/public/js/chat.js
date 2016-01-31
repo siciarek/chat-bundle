@@ -181,8 +181,8 @@ function getUsers(data) {
                                     <div class="col-md-3">\n\
                                         <img src="{{ image }}&d={{ #defimg }}{{ /defimg }}" alt="{{ username }}" alt="{{ username }}" class="img-circle"/>\n\
                                     </div>\n\
-                                    <div class="col-md-7"><strong>{{ username }}</strong></div>\n\
-                                    <div class="col-md-2"><i class="fa-circle fa fa-fw" aria-hidden="true"></i></div>\n\
+                                    <div class="col-md-6"><strong>{{ username }}</strong></div>\n\
+                                    <div class="col-md-3"><i class="fa-circle fa fa-fw" aria-hidden="true"></i></div>\n\
                                 </li>\n\
                                 </a>\n\
                             {{ /online }}\n\
@@ -193,8 +193,8 @@ function getUsers(data) {
                                     <div class="col-md-3">\n\
                                         <img src="{{ image }}&d={{ #defimg }}{{ /defimg }}" alt="{{ username }}" title="{{ username }}" class="img-circle"/>\n\
                                     </div>\n\
-                                    <div class="col-md-7">{{ username }}</div>\n\
-                                    <div class="col-md-2"><i class="fa-circle-o fa fa-fw" aria-hidden="true"></i></div>\n\
+                                    <div class="col-md-6">{{ username }}</div>\n\
+                                    <div class="col-md-3"><i class="fa-circle-o fa fa-fw" aria-hidden="true"></i></div>\n\
                                 </li>\n\
                                 </a>\n\
                             {{ /online }}\n\
@@ -219,20 +219,15 @@ function updateChannel() {
     sendJsonp(urls.messages, {}, function (resp) {
         var selector = $('#messages');
         selector.find('dl').remove();
-        selector
-                .removeClass('hidden')
-                .append(getMessages(resp.data))
-                ;
+        selector.append(getMessages(resp.data));
+
+        selector.closest('.chat-body').removeClass('hidden');
     });
 
     sendJsonp(urls.assignees, {}, function (resp) {
         var selector = $('#assignees');
         selector.find('*').remove();
-        selector
-                .append(getAssignees(resp.data))
-                .removeClass('hidden')
-                ;
-
+        selector.append(getAssignees(resp.data));
     });
 }
 
