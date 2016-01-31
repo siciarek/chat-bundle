@@ -1,21 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
+        {% set bootstrapVersion = '3.3.6' %}
+        {% set jqueryVersion = '2.1.4' %}
+        {% set fontAwesomeVersion = '4.5.0' %}
+        {% set menu = [
+            {
+                label: 'Home',
+                icon: 'home',
+                route: 'default.home',
+            },
+            {
+                label: 'Chat',
+                icon: 'edit',
+                route: 'default.sample',
+            },
+            {
+                label: 'Sign in',
+                icon: 'sign-in',
+                route: 'fos_user_security_login',
+            },
+        ] %}
+
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-        <title>{% block title %}{{ app_name }}{% endblock %}</title>
+        <title>{% block title %}Sample Chat{% endblock %}</title>
 
         {% block stylesheets %}
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/{{ fontAwesomeVersion }}/css/font-awesome.min.css">
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/{{ bootstrapVersion }}/css/bootstrap.min.css">
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/{{ bootstrapVersion }}/css/bootstrap-theme.min.css">
-            <link rel="stylesheet" href="//plugins.krajee.com/assets/4b1a3b2e/css/checkbox-x.min.css">
-
-            <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.timepicker/0.2.6/css/bootstrap-timepicker.min.css"/>
-
         {% endblock %}
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -44,76 +61,25 @@
                 </div>
                 <div id="bs-navbar-main-collapse" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
- 
-                        {% set menu = [
-                            {
-                                label: 'Home',
-                                icon: 'home',
-                                route: 'default.home',
-                            },
-                            {
-                                label: 'Chat',
-                                icon: 'edit',
-                                route: 'default.sample',
-                            },
-                            {
-                                label: 'Sign in',
-                                icon: 'sign-in',
-                                route: 'fos_user_security_login',
-                            },
-                        ] %}
-                        
                         {% for m in menu %}
-                        <li class="{{ app.request.get('_route') == m.route ? 'active' : '' }}">
-                            <a title="{{m.label}}" href="{{ path(m.route) }}">
-                                <i class="fa fa-{{m.icon}} fa-lg fa-fw"></i>
-                                {{m.label}} 
-                            </a>
-                        </li>
+                            <li class="{{ app.request.get('_route') == m.route ? 'active' : '' }}">
+                                <a title="{{m.label}}" href="{{ path(m.route) }}">
+                                    <i class="fa fa-{{m.icon}} fa-lg fa-fw"></i>
+                                    {{m.label}} 
+                                </a>
+                            </li>
                         {% endfor %}
-                        
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div class="container">
-            {% set style = {
-                error: 'danger',
-                warning: 'warning',
-                info: 'info',
-                success: 'success'
-            } %}
+        <div class="container">{% block body %}{% block fos_user_content %}{% endblock %}{% endblock %}</div>
 
-            {% for type in ['success', 'error', 'warning', 'info'] %}
-                {% if app.session.flashBag.has(type) %}
-                    <div class="top alert alert-{{ style[type] }}">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> 
-                        <ul>
-                            {% for msg in app.session.flashBag.get(type) %}
-                                <li>{{ msg|trans }}</li>
-                                {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-            {% endfor %}
-
-            {% block body %}
-            {% block fos_user_content %}{% endblock %}
+        {% block javascripts %}
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/{{ jqueryVersion }}/jquery.min.js"></script>
+            <script src="//maxcdn.bootstrapcdn.com/bootstrap/{{ bootstrapVersion }}/js/bootstrap.min.js"></script>
         {% endblock %}
 
-    </div>
-
-    {% block javascripts %}
-
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/{{ jqueryVersion }}/jquery.min.js"></script>
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/{{ bootstrapVersion }}/js/bootstrap.min.js"></script>
-        <script src="//plugins.krajee.com/assets/4b1a3b2e/js/checkbox-x.min.js"></script>
-        <script src="//cdn.jsdelivr.net/bootstrap.timepicker/0.2.6/js/bootstrap-timepicker.min.js"></script>
-
-        {#        <script src="{{ asset('bundles/ivoryckeditor/ckeditor.js') }}"></script>#}
-
-    {% endblock %}
-
-</body>
+    </body>
 </html>
