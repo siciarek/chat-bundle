@@ -21,7 +21,7 @@ class ChatChannel implements ContainerAwareInterface
      */
     protected $container;
 
-    public function leave($id, UserInterface $user)
+    public function leave($id, UserInterface $user, $farewellMessage = 'Elvis has left the building.')
     {
 
         $channel = $this->find($id);
@@ -50,6 +50,8 @@ class ChatChannel implements ContainerAwareInterface
             $this->em->remove($channel);
             $this->em->flush();
         }
+        
+        $this->getContainer()->get('chat.message')->send($farewellMessage, $id);
 
         return true;
     }
@@ -82,6 +84,7 @@ class ChatChannel implements ContainerAwareInterface
             $channel->addAssignee($a);
 
 // Private chanel is only for two persons
+            
             $names[] = $assignee->getUsername();
 
             if ($type === Channel::TYPE_PRIVATE and $assignee === $assignees[1]) {

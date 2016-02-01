@@ -1,4 +1,10 @@
 var emoticons = [
+    ['&lt;3',   '<i class="fa-heart fa fa-lg text-danger"></i>'],
+    [';\\|', '<i class="fa-meh-o fa fa-lg"></i>'],
+    [';\\(', '<i class="fa-frown-o fa fa-lg"></i>'],
+    [';\\)', '<i class="fa-smile-o fa fa-lg"></i>'],
+    [':\\|', '<i class="fa-meh-o fa fa-lg"></i>'],
+    [':\\(', '<i class="fa-frown-o fa fa-lg"></i>'],
     [':\\)', '<i class="fa-smile-o fa fa-lg"></i>']
 ];
 

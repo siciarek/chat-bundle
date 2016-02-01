@@ -28,7 +28,7 @@ class DefaultController extends Controller
             throw $this->createAccessDeniedException();
         }
         
-        $refreshAfter = 200; //$this->container->getParameter('siciarek_chat.refresh');
+        $refreshAfter = $this->container->getParameter('siciarek_chat.refresh');
 
         return [
             'refreshAfter' => $refreshAfter,
