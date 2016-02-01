@@ -141,13 +141,14 @@ class ChatChannel implements ContainerAwareInterface
             $channel = $result[0];
             if ($channel->isDeleted()) {
                 $channel->restore();
+                $channel->setDeletedBy(null);
             }
             foreach ($channel->getAssignees(true) as $a) {
                 $a->restore();
+                $a->setDeletedBy(null);
             }
         } else {
             $channel->setName($name);
-
             $this->em->persist($channel);
         }
         $this->em->flush();
