@@ -1,5 +1,6 @@
-
-var currentChannel = 0;
+var emoticons = [
+    [':\\)', '<i class="fa-smile-o fa fa-lg"></i>']
+];
 
 var gravatars = {
     'default': null,
@@ -12,6 +13,7 @@ var gravatars = {
 
 var defimg = gravatars['identicon'];
 
+var currentChannel = 0;
 
 function sendJsonp(url, data, successCallback, async) {
 
@@ -121,12 +123,26 @@ function getMessages(data) {
         };
     };
 
+    data.enhance = function () {
+        return function (val, render) {
+            var content = render(val);
+
+            $(emoticons).each(function (i, e) {
+                var pattern = new RegExp(e[0], 'g');
+                var replacement = e[1];
+                content = content.replace(pattern, replacement);
+            });
+
+            return content;
+        };
+    }
+
     var tmpl = '<dl class="dl-horizontal">\n\
                                 {{#items}}\n\
                                     <dt class="text-primary">{{ createdBy }}</dt>\n\
                                     <dd>\n\
                                         <div col="row">\n\
-                                            <div class="col-lg-12">{{ content }}</div>\n\
+                                            <div class="col-lg-12">{{#enhance}}{{ content }}{{/enhance}}</div>\n\
                                         </div>\n\
                                         <div col="row">\n\
                                             <div class="col-lg-12 text-muted right"><em>{{#formatDate}}{{ createdAt.date }}{{/formatDate}}</em></div>\n\
