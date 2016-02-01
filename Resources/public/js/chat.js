@@ -115,16 +115,26 @@ function synchronize() {
 }
 
 function getMessages(data) {
+    data.formatDate = function () {
+        return function (val, render) {
+            return render(val).replace(/^(\d{4}\-\d{2}\-\d{2} \d{2}:\d{2}).*$/, '$1');
+        };
+    };
 
     var tmpl = '<dl class="dl-horizontal">\n\
                                 {{#items}}\n\
                                     <dt class="text-primary">{{ createdBy }}</dt>\n\
                                     <dd>\n\
-                                        {{ content }}<br/>\n\
-                                        <div class="text-muted right">\n\
-                                            <em>{{ createdAt }}</em>\n\
+                                        <div col="row">\n\
+                                            <div class="col-lg-12">{{ content }}</div>\n\
+                                        </div>\n\
+                                        <div col="row">\n\
+                                            <div class="col-lg-12 text-muted right"><em>{{#formatDate}}{{ createdAt.date }}{{/formatDate}}</em></div>\n\
                                         </div>\n\
                                     </dd>\n\
+                                {{/items}}\n\
+                                {{^items}}\n\
+                                <div class="alert alert-info">List is empty.</div>\n\
                                 {{/items}}\n\
                             </dl>';
 
