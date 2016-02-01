@@ -15,7 +15,7 @@ var defimg = gravatars['identicon'];
 
 var currentChannel = 0;
 
-function sendJsonp(url, data, successCallback, async) {
+function sendJsonRequest(url, data, successCallback, async) {
 
     if (typeof async === 'undefined') {
         async = true;
@@ -29,6 +29,7 @@ function sendJsonp(url, data, successCallback, async) {
         cache: false,
         async: async,
         data: {
+            
         },
         success: function (resp) {
             if (resp.success) {
@@ -46,12 +47,10 @@ function sendJsonp(url, data, successCallback, async) {
             }
         },
         error: function (resp) {
-            if (resp.statusText == 'Forbiden') {
-                spinner();
-                location.href = Routing.generate('fos_user_security_logout');
+            if (resp.statusText.trim() === 'Forbiden') {
+                location.reload();
                 return;
             }
-
             alert('ERROR:\n' + resp.statusText);
         }
     });
@@ -86,13 +85,13 @@ function synchronize() {
         channels: getUrl('channels'),
     };
 
-    sendJsonp(urls.users, {}, function (resp) {
+    sendJsonRequest(urls.users, {}, function (resp) {
 
         var selector = $('#users');
         selector.html(getUsers(resp.data));
     });
 
-    sendJsonp(urls.channels, {}, function (resp) {
+    sendJsonRequest(urls.channels, {}, function (resp) {
 
         var selector = $('#channels');
         selector.find('*').remove();
@@ -242,7 +241,7 @@ function updateChannel() {
         assignees: getUrl('assignees'),
     };
 
-    sendJsonp(urls.messages, {}, function (resp) {
+    sendJsonRequest(urls.messages, {}, function (resp) {
         var selector = $('#messages');
         selector.find('dl').remove();
         selector.append(getMessages(resp.data));
@@ -250,7 +249,7 @@ function updateChannel() {
         selector.closest('.chat-body').removeClass('hidden');
     });
 
-    sendJsonp(urls.assignees, {}, function (resp) {
+    sendJsonRequest(urls.assignees, {}, function (resp) {
         var selector = $('#assignees');
         selector.find('*').remove();
         selector.append(getAssignees(resp.data));
@@ -280,7 +279,7 @@ $(document).ready(function () {
     $('#users')
             .on('click', 'a', function (e) {
                 e.preventDefault();
-                sendJsonp($(this).attr('href'), {}, synchronize);
+                sendJsonRequest($(this).attr('href'), {}, synchronize);
             })
             ;
 

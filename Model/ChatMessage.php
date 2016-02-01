@@ -9,16 +9,6 @@ use Siciarek\ChatBundle\Entity\ChatChannel as Channel;
 use Siciarek\ChatBundle\Entity\ChatChannelAssignee as Assignee;
 use Siciarek\ChatBundle\Entity\ChatMessage as Message;
 
-class ChatMessageException extends \Exception
-{
-
-    public function __construct($message = "", $code = 0, \Exception $previous = null)
-    {
-        parent::__construct($message, 4561237 + 1, $previous);
-    }
-
-}
-
 class ChatMessage implements ContainerAwareInterface
 {
 
