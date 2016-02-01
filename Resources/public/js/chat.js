@@ -71,6 +71,8 @@ function getUrl(name, data) {
         case 'messages':
         case 'sendMessage':
         case 'assignees':
+        case 'leaveChannel':
+        case 'joinChannel':
             url = urlsTmpl[name].replace(/\/1\//, '/' + currentChannel + '/');
             break;
     }
@@ -176,8 +178,14 @@ function getChannels(data) {
     var tmpl = '<ul class="nav nav-tabs">\n\
                                 {{#items}}\n\
                                 <li role="presentation">\n\
-                                    <a role="tab" data-toggle="tab" href="#{{ id }}">{{ name }}</a>\n\
-                                </li>\n\
+                                    <a role="tab" data-toggle="tab" href="#{{ id }}">\n\
+                                        {{ name }}\n\
+                                        &nbsp;&nbsp;\n\
+                                        <span class="leave-channel">\n\
+                                            <i class="fa-times-circle fa"></i>\n\
+                                        </span>\n\
+                                    </a>\n\
+                                 </li>\n\
                                 {{/items}}\n\
                              </ul>';
 
@@ -284,6 +292,14 @@ $(document).ready(function () {
             ;
 
     $('#channels')
+            .on('click', '.leave-channel', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var leaveChannelUrl = getUrl('leaveChannel');
+                
+                location.href = leaveChannelUrl;
+            })
             .on('click', 'li a', function (e) {
 
                 e.preventDefault();
@@ -292,7 +308,6 @@ $(document).ready(function () {
                 self.blur();
 
                 currentChannel = self.attr('href').replace(/\D+/g, '');
-
                 sendMessageUrl = getUrl('sendMessage');
 
                 var form = $('#messages form');
@@ -301,8 +316,6 @@ $(document).ready(function () {
 
 
                 updateChannel();
-
-
             })
             ;
 

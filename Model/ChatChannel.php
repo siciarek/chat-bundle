@@ -21,33 +21,38 @@ class ChatChannel implements ContainerAwareInterface
      */
     protected $container;
 
-    protected function getRepo()
-    {
-        return $this->em->getRepository('SiciarekChatBundle:ChatChannel');
-    }
-
-    public function find($id)
-    {
-
-        try {
-            $obj = $this->getRepo()->find($id);
-        } catch (\Doctrine\ORM\NoResultException $e) {
-            throw new ChatChannelException('Channel not exist.', 4561237 + 2);
+    public function leave($id, UserInterface $user) {
+        
+        $channel = $this->find($id);
+        
+        $repo = $this->em->getRepository('SiciarekChatBundle:ChatChannelAssignee');
+        $qb = $repo->createQueryBuilder('a')
+                ->leftJoin('a.channel', 'c')
+                ->andWhere('c.id = :channel')
+                ->andWhere('a.assigneeId = :id')
+                ->andWhere('a.assigneeClass = :class')
+                ->setParameters([
+                    'channel' => $id,
+                    'id' => $user->getId(),
+                    'class' => get_class($user),
+                ]);
+        
+        $query = $qb->getQuery();     
+        $assignee = $query->getSingleResult();
+        
+        $channel->removeAssignee($assignee);
+        $this->em->remove($assignee);
+        $this->em->flush();
+        $this->em->refresh($channel);
+        
+        if($channel->getAssignees()->count() === 0) {
+            $this->em->remove($channel);
+            $this->em->flush();
         }
-
-        return $obj;
+        
+        return true;
     }
-
-    protected function getQueryBuilder()
-    {
-        $qb = $this->getRepo()
-                ->createQueryBuilder('o')
-                ->andWhere('o.deletedAt is NULL')
-        ;
-
-        return $qb;
-    }
-
+    
     /**
      * Creates new channel
      * 
@@ -193,11 +198,11 @@ class ChatChannel implements ContainerAwareInterface
      * @param UserInterface $assignee
      * @return array
      */
-    public function getList(UserInterface $assignee)
+    public function getList(UserInterface $user)
     {
         $params = [
-            'assigneeId' => $assignee->getId(),
-            'assigneeClass' => get_class($assignee),
+            'assigneeId' => $user->getId(),
+            'assigneeClass' => get_class($user),
         ];
 
         $qb = $this->getQueryBuilder()
@@ -227,4 +232,27 @@ class ChatChannel implements ContainerAwareInterface
         $this->em = $this->getContainer()->get('doctrine.orm.entity_manager');
     }
 
+    protected function getRepo()
+    {
+        return $this->em->getRepository('SiciarekChatBundle:ChatChannel');
+    }
+
+    public function find($id)
+    {
+        try {
+            return $this->getRepo()->findOneBy(['id' => $id]);
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            throw new ChatChannelException('Channel does not exist.', 4561237 + 2);
+        }
+    }
+
+    protected function getQueryBuilder()
+    {
+        $qb = $this->getRepo()
+                ->createQueryBuilder('o')
+                ->andWhere('o.deletedAt is NULL')
+        ;
+
+        return $qb;
+    }
 }

@@ -22,6 +22,10 @@
         .right {
             text-align:right!important;
         }
+        
+        .leave-channel {
+            cursor: pointer !important;
+        }
     </style>
 {% endblock %}
 
@@ -36,6 +40,8 @@
             users: '{{ url('chat.user.list') }}',
             channels: '{{ url('chat.channel.list') }}',
             createChannel: '{{ url('chat.channel.create', {assignees: "[1]"}) }}',
+            joinChannel: '{{ url('chat.channel.join', { channel: 1 }) }}',
+            leaveChannel: '{{ url('chat.channel.leave', { channel: 1 }) }}',
             assignees: '{{ url('chat.channel.assignee.list', { channel: 1 }) }}',
             messages: '{{ url('chat.message.list', { channel: 1 }) }}',
             sendMessage: '{{ url('chat.message.send', { channel: 1 }) }}'

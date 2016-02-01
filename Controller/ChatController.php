@@ -27,7 +27,7 @@ class ChatController extends CommonController
         $sql = sprintf('SELECT * FROM %s WHERE data LIKE :like', $sessionTable);
         $stmt = $em->getConnection()->prepare($sql);
         $like = '%' . preg_replace('/\\\/', '\\\\\\', $userClass) . '%';
-        $stmt->execute([ 'like' => $like ]);
+        $stmt->execute([ 'like' => $like]);
         $result = $stmt->fetchAll();
 
         $ids = [];
@@ -73,7 +73,7 @@ class ChatController extends CommonController
                     ->andWhere('u.enabled = true')
                     ->andWhere('u.username NOT IN (:excluded)')
                     ->setParameters([
-                        'excluded' => ['system'],
+                        'excluded' => ['system', $this->getUser()->getUsername()],
                     ])
                     ->getQuery()
             ;
@@ -90,7 +90,7 @@ class ChatController extends CommonController
             usort($data, function($a, $b) {
                 return $a['online'] < $b['online'];
             });
-            
+
             return $this->getFrame()->getDataFrame('Users', $data);
         };
         return $this->handleJsonAction($run);
@@ -135,9 +135,13 @@ class ChatController extends CommonController
      */
     public function channelJoinAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $run = function() use ($request, $channel) {
+            $data = $this->get('chat.channel')->join($this->getUser());
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+            return $this->getFrame()->getInfoFrame(null, $data);
+        };
+
+        return $this->handleJsonAction($run);
     }
 
     /**
@@ -145,9 +149,11 @@ class ChatController extends CommonController
      */
     public function channelLeaveAction(Request $request, $channel)
     {
-        $data = [__FUNCTION__, $channel];
+        $run = function() use ($request, $channel) {
+            $this->get('chat.channel')->leave($channel, $this->getUser());
+        };
 
-        return new Response(json_encode($data, JSON_PRETTY_PRINT));
+        return $this->handleHtmlAction($run, $request);
     }
 
 # ------------------------------------------------------------------------------
@@ -235,18 +241,18 @@ class ChatController extends CommonController
      * @Route("/channel/{channel}/message/list", defaults={"_format":"json"}, name="chat.message.list")
      */
     public function messageListAction(Request $request, $channel)
-    {   
-        
+    {
+
         $run = function() use ($request, $channel) {
             $page = $request->query->getInt('page', 1);
-        
+
             /**
              * @var \Knp\Component\Pager
              */
             $pager = $this->get('chat.message')->getList($channel, $this->getUser(), $page);
 
             $frame = $this->getFrame()->getDataFrame('Messages', $pager);
-            
+
             return $frame;
         };
 
@@ -256,7 +262,7 @@ class ChatController extends CommonController
     /**
      * @Route("/channel/{channel}/message/send", defaults={"_format":"json"}, name="chat.message.send")
      */
-    public function messageAppendAction(Request $request, $channel)
+    public function messageSendAction(Request $request, $channel)
     {
         $run = function() use ($request, $channel) {
 

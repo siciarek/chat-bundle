@@ -3,22 +3,23 @@
 namespace Siciarek\ChatBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class CommonController extends Controller
 {
+    const MESSAGE_ERROR = 'error';
+    const MESSAGE_WARNING = 'warning';
+    const MESSAGE_INFO = 'info';
+    const MESSAGE_SUCCESS = 'success';
 
     public static $customExceptions = [
         'Siciarek\ChatBundle\Model\ChatChannelException',
         'Siciarek\ChatBundle\Model\ChatMessageException',
     ];
-
-    protected function getFrame()
-    {
-        return new \Siciarek\ChatBundle\Model\LaafFrame();
-    }
-
+        
     /**
      * Zwraca dane JSON wysłane postem jako tablicę lub obiekt
      *
@@ -51,7 +52,33 @@ abstract class CommonController extends Controller
     }
 
     /**
-     * Handles json response
+     * Returns json response.
+     */
+    protected function getJsonResponse($data)
+    {
+        $request = $this->get('request');
+
+        $json = json_encode($data, JSON_PRETTY_PRINT);
+
+        $contentType = 'application/json';
+        $content = $json;
+
+        // <jsonp>
+        $callback = $request->get('callback');
+
+        if ($callback !== null) {
+            $contentType = 'application/javascript';
+            $content = sprintf('%s(%s);', $callback, $json);
+        }
+        // </jsonp>
+
+        $response = new Response($content, 200, [ 'Content-Type' => $contentType]);
+
+        return $response;
+    }
+
+    /**
+     * Handles json action
      *
      * @param type $run callable
      */
@@ -84,29 +111,39 @@ abstract class CommonController extends Controller
     }
 
     /**
-     * Returns json response.
+     * Handles html action
+     *
+     * @param type $run callable
      */
-    protected function getJsonResponse($data)
+    protected function handleHtmlAction($run, Request $request)
     {
-        $request = $this->get('request');
+        $url = null;
 
-        $json = json_encode($data, JSON_PRETTY_PRINT);
+        try {
+            $url = $run();
+        } catch (\Exception $e) {
 
-        $contentType = 'application/json';
-        $content = $json;
-
-        // <jsonp>
-        $callback = $request->get('callback');
-
-        if ($callback !== null) {
-            $contentType = 'application/javascript';
-            $content = sprintf('%s(%s);', $callback, $json);
+            $msg = 'Unexpected Exception.';
+            $type = self::MESSAGE_ERROR;
+            
+            if (in_array(get_class($e), self::$customExceptions)) {
+                $type = self::MESSAGE_WARNING;
+                $msg = $e->getMessage();
+            } elseif ($this->get('kernel')->getEnvironment() !== 'prod') {
+                $msg = $e->getMessage();
+            }
+            
+            $this->addFlash($type, $msg);
         }
-        // </jsonp>
-
-        $response = new Response($content, 200, [ 'Content-Type' => $contentType]);
-
-        return $response;
+        $url = empty($url) ? $request->headers->get('referer') : $url;        
+        $url = empty($url) ? $request->getSchemeAndHttpHost() : $url;
+        
+        return $this->redirect($url);
+    }
+    
+    protected function getFrame()
+    {
+        return new \Siciarek\ChatBundle\Model\LaafFrame();
     }
 
 }

@@ -69,12 +69,32 @@
             </div>
         </div>
 
-        <div class="container">{% block body %}{% block fos_user_content %}{% endblock %}{% endblock %}</div>
+        <div class="container">
 
-        {% block javascripts %}
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/{{ jqueryVersion }}/jquery.min.js"></script>
-            <script src="//maxcdn.bootstrapcdn.com/bootstrap/{{ bootstrapVersion }}/js/bootstrap.min.js"></script>
-        {% endblock %}
+            {% set style = {
+                error: 'danger',
+                warning: 'warning',
+                info: 'info',
+                success: 'success'
+            } %}
 
-    </body>
+            {% for type in ['success', 'error', 'warning', 'info'] %}
+                {% if app.session.flashBag.has(type) %}
+                    <div class="top alert alert-{{ style[type] }}">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> 
+                        <ul>
+                            {% for msg in app.session.flashBag.get(type) %}
+                                <li>{{ msg|trans }}</li>
+                                {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+    {% endfor %}{% block body %}{% block fos_user_content %}{% endblock %}{% endblock %}</div>
+
+{% block javascripts %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/{{ jqueryVersion }}/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/{{ bootstrapVersion }}/js/bootstrap.min.js"></script>
+{% endblock %}
+
+</body>
 </html>

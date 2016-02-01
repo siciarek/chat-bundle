@@ -218,7 +218,11 @@ class ChatChannel
      */
     public function getAssignees()
     {
-        return $this->assignees;
+        $assignees = $this->assignees->filter(function($e) {
+            return $e->getDeletedAt() === null;
+        });
+
+        return $assignees;
     }
 
 }
