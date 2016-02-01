@@ -187,8 +187,8 @@ function getChannels(data) {
                                     <a role="tab" data-toggle="tab" href="#{{ id }}">\n\
                                         {{ name }}\n\
                                         &nbsp;&nbsp;\n\
-                                        <span class="leave-channel">\n\
-                                            <i class="fa-times-circle fa"></i>\n\
+                                        <span class="leave-channel" title="Leave the channel">\n\
+                                            <i class="fa-times-circle fa fa-lg"></i>\n\
                                         </span>\n\
                                     </a>\n\
                                  </li>\n\
@@ -302,6 +302,9 @@ $(document).ready(function () {
                 e.preventDefault();
                 e.stopPropagation();
 
+                var id = $(this).closest('a').attr('href').replace(/\D/g, '');
+                currentChannel = parseInt(id);
+                
                 var leaveChannelUrl = getUrl('leaveChannel');
                 
                 location.href = leaveChannelUrl;
