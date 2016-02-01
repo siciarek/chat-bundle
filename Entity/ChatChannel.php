@@ -216,8 +216,12 @@ class ChatChannel
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getAssignees()
+    public function getAssignees($all = false)
     {
+        if($all === true) {
+            return $this->assignees;
+        }
+        
         $assignees = $this->assignees->filter(function($e) {
             return $e->getDeletedAt() === null;
         });

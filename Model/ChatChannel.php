@@ -21,10 +21,11 @@ class ChatChannel implements ContainerAwareInterface
      */
     protected $container;
 
-    public function leave($id, UserInterface $user) {
-        
+    public function leave($id, UserInterface $user)
+    {
+
         $channel = $this->find($id);
-        
+
         $repo = $this->em->getRepository('SiciarekChatBundle:ChatChannelAssignee');
         $qb = $repo->createQueryBuilder('a')
                 ->leftJoin('a.channel', 'c')
@@ -32,27 +33,27 @@ class ChatChannel implements ContainerAwareInterface
                 ->andWhere('a.assigneeId = :id')
                 ->andWhere('a.assigneeClass = :class')
                 ->setParameters([
-                    'channel' => $id,
-                    'id' => $user->getId(),
-                    'class' => get_class($user),
-                ]);
-        
-        $query = $qb->getQuery();     
+            'channel' => $id,
+            'id' => $user->getId(),
+            'class' => get_class($user),
+        ]);
+
+        $query = $qb->getQuery();
         $assignee = $query->getSingleResult();
-        
+
         $channel->removeAssignee($assignee);
         $this->em->remove($assignee);
         $this->em->flush();
         $this->em->refresh($channel);
-        
-        if($channel->getAssignees()->count() === 0) {
+
+        if ($channel->getAssignees()->count() === 0) {
             $this->em->remove($channel);
             $this->em->flush();
         }
-        
+
         return true;
     }
-    
+
     /**
      * Creates new channel
      * 
@@ -124,7 +125,8 @@ class ChatChannel implements ContainerAwareInterface
             $name .= ' + ' . $count;
         }
 
-        $result = $this->getQueryBuilder()
+        $result = $this->getRepo()
+                ->createQueryBuilder('o')
                 ->andWhere('o.name = :name')
                 ->setParameters(['name' => $name])
                 ->orderBy('o.createdAt', 'DESC')
@@ -134,12 +136,18 @@ class ChatChannel implements ContainerAwareInterface
 
         if (count($result) > 0) {
             $channel = $result[0];
+            if ($channel->isDeleted()) {
+                $channel->restore();
+            }
+            foreach ($channel->getAssignees(true) as $a) {
+                $a->restore();
+            }
         } else {
             $channel->setName($name);
 
             $this->em->persist($channel);
-            $this->em->flush();
         }
+        $this->em->flush();
 
         return $this->getDetails($channel->getId());
     }
@@ -209,6 +217,7 @@ class ChatChannel implements ContainerAwareInterface
                 ->leftJoin('o.assignees', 'a')
                 ->andWhere('a.assigneeId = :assigneeId')
                 ->andWhere('a.assigneeClass = :assigneeClass')
+                ->andWhere('a.deletedAt IS null')
                 ->orderBy('o.createdAt', 'DESC')
                 ->setParameters($params)
         ;
@@ -216,6 +225,19 @@ class ChatChannel implements ContainerAwareInterface
         $query = $qb->getQuery();
 
         $items = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        
+        $items = array_map(function($e) use ($user) {
+            $name = $e['name'];
+            $name = str_replace(', ' . $user->getUsername(), '', $name);
+            $name = str_replace($user->getUsername() . ',', '', $name);
+            $name = str_replace($user->getUsername(), '', $name);
+            $name = trim($name);
+            $name = preg_replace('/\s+/', ' ', $name);
+            
+            $e['name'] = $name;
+            
+            return $e;
+        }, $items);
 
         return $items;
     }
@@ -255,4 +277,5 @@ class ChatChannel implements ContainerAwareInterface
 
         return $qb;
     }
+
 }
