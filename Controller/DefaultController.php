@@ -10,16 +10,16 @@ class DefaultController extends Controller
 {
 
     /**
-     * @Route("/", name="default.home")
+     * @Route("/", name="chat.default.home")
      * @Template()
      */
     public function homeAction()
     {
         return [];
     }
-    
+
     /**
-     * @Route("/sample", name="default.sample")
+     * @Route("/sample", name="chat.default.sample")
      * @Template()
      */
     public function sampleAction()
@@ -28,6 +28,10 @@ class DefaultController extends Controller
             throw $this->createAccessDeniedException();
         }
         
-        return [];
+        $refreshAfter = $this->container->getParameter('siciarek_chat.refresh');
+
+        return [
+            'refreshAfter' => $refreshAfter,
+        ];
     }
 }

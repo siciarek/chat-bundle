@@ -235,11 +235,19 @@ class ChatController extends CommonController
      * @Route("/channel/{channel}/message/list", defaults={"_format":"json"}, name="chat.message.list")
      */
     public function messageListAction(Request $request, $channel)
-    {
+    {   
+        
         $run = function() use ($request, $channel) {
-            $items = $this->get('chat.message')->getList($channel, $this->getUser());
+            $page = $request->query->getInt('page', 1);
+        
+            /**
+             * @var \Knp\Component\Pager
+             */
+            $pager = $this->get('chat.message')->getList($channel, $this->getUser(), $page);
 
-            return $this->getFrame()->getDataFrame('Messages', $items);
+            $frame = $this->getFrame()->getDataFrame('Messages', $pager);
+            
+            return $frame;
         };
 
         return $this->handleJsonAction($run);

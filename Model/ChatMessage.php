@@ -45,7 +45,7 @@ class ChatMessage implements ContainerAwareInterface
      * @param UserInterface $assignee
      * @return array
      */
-    public function getList($channelId, UserInterface $assignee)
+    public function getList($channelId, UserInterface $assignee, $page)
     {
         $params = [
             'channel' => $this->getContainer()->get('chat.channel')->find($channelId),
@@ -60,16 +60,10 @@ class ChatMessage implements ContainerAwareInterface
         ;
 
         $query = $qb->getQuery();
-
-        $items = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-        $items = json_decode($this->serializer->serialize($items, 'json'), true);
+        $pageSize = $this->getContainer()->getParameter('siciarek_chat.pager');
+        $pager = $this->getContainer()->get('knp_paginator')->paginate($query, $page, $pageSize);
         
-        $items = array_map(function($message) {
-            $message['createdAt'] = date($this->dateformat, strtotime($message['createdAt']));
-            return $message;
-        }, $items);
-
-        return $items;
+        return $pager;
     }
 
     public function send($content, $channelId)

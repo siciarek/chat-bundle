@@ -27,7 +27,7 @@
     <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js') }}"></script>
 
     <script>
-        var refreshAfter = 10;
+        var refreshAfter = parseInt({{refreshAfter}});
         var urlsTmpl = {
             users: '{{ url('chat.user.list') }}',
             channels: '{{ url('chat.channel.list') }}',

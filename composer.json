@@ -19,6 +19,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
+        "knplabs/knp-paginator-bundle": "dev-master",
         "brandonwamboldt/utilphp": "1.1.*",
         "jms/serializer-bundle": "1.1@dev",
         "friendsofsymfony/user-bundle": "~1.3",

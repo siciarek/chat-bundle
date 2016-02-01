@@ -26,7 +26,7 @@ class SiciarekChatExtension extends Extension
         $loader->load('services.yml');
         
         foreach($config as $key => $value) {
-            $container->setParameter('application_main.' . $key, $value);
+            $container->setParameter('siciarek_chat.' . $key, $value);
         }
     }
 }

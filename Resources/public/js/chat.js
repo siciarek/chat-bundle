@@ -253,15 +253,8 @@ $(document).ready(function () {
 
     $('#users')
             .on('click', 'a', function (e) {
-
                 e.preventDefault();
-                var self = $(this);
-
-                var url = self.attr('href');
-
-                sendJsonp(url, {}, function (resp) {
-                    synchronize();
-                }, true);
+                sendJsonp($(this).attr('href'), {}, synchronize);
             })
             ;
 
@@ -288,7 +281,6 @@ $(document).ready(function () {
             })
             ;
 
-
     synchronize();
-    setInterval('synchronize', refreshAfter * 1000);
+    setInterval(synchronize, refreshAfter * 1000);
 });
