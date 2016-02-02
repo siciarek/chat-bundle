@@ -4,18 +4,6 @@
         {% set bootstrapVersion = '3.3.6' %}
         {% set jqueryVersion = '2.1.4' %}
         {% set fontAwesomeVersion = '4.5.0' %}
-        {% set menu = [
-            {
-                label: 'Home',
-                icon: 'home',
-                route: 'chat.default.home',
-            },
-            {
-                label: 'Chat',
-                icon: 'edit',
-                route: 'chat.default.sample',
-            }
-        ] %}
 
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,7 +27,20 @@
     </head>
 
     <body>
-
+        {% block menu %}
+        {% set menu = [
+            {
+                label: 'Home',
+                icon: 'home',
+                route: 'chat.default.home',
+            },
+            {
+                label: 'Chat',
+                icon: 'edit',
+                route: 'chat.default.sample',
+            }
+        ] %}
+        
         <div class="navbar navbar-inverse navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
@@ -58,7 +59,7 @@
                     <ul class="nav navbar-nav">
                         {% for m in menu %}
                             <li class="{{ app.request.get('_route') == m.route ? 'active' : '' }}">
-                                <a title="{{m.label}}" href="{{ path(m.route) }}">
+                                <a title="{{m.label}}" class="{{m.icon}}" href="{{ m.route == null ? 'javascript:void(null)' : path(m.route) }}">
                                     <i class="fa fa-{{m.icon}} fa-lg fa-fw"></i>
                                     {{m.label}} 
                                 </a>
@@ -68,7 +69,8 @@
                 </div>
             </div>
         </div>
-
+        {% endblock %}
+                    
         <div class="container">
 
             {% set style = {

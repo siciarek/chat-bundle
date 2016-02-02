@@ -18,11 +18,11 @@
         #messages dl dt:after {
             content: ':';
         }
-        
+
         .right {
             text-align:right!important;
         }
-        
+
         .leave-channel {
             cursor: pointer !important;
         }
@@ -51,6 +51,54 @@
 
     <script src="{{ asset('/bundles/siciarekchat/js/chat.js') }}"></script>
 
+{% endblock %}
+{% block menu %}
+    {% set menu = [
+            {
+                label: 'Home',
+                icon: 'home',
+                route: 'chat.default.home',
+            },
+            {
+                label: 'Chat',
+                icon: 'edit',
+                route: 'chat.default.sample',
+            },
+            {
+                label: 'Create channel',
+                icon: 'user-plus',
+                route: null,
+            }
+        ] %}
+
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button aria-expanded="false" data-target="#bs-navbar-main-collapse" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="{{ path('chat.default.home') }}" class="navbar-brand">
+                    <strong>Sample Chat</strong>
+                    &nbsp;<i class="fa-certificate fa"></i>  
+                </a>
+            </div>
+            <div id="bs-navbar-main-collapse" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    {% for m in menu %}
+                        <li class="{{ app.request.get('_route') == m.route ? 'active' : '' }}">
+                            <a title="{{m.label}}" class="{{m.icon}}" href="{{ m.route == null ? 'javascript:void(null)' : path(m.route) }}">
+                                <i class="fa fa-{{m.icon}} fa-lg fa-fw"></i>
+                                {{m.label}} 
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block body %}

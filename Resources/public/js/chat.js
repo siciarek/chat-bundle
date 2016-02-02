@@ -144,56 +144,75 @@ function getMessages(data) {
         };
     }
 
-    var tmpl = '<dl class="dl-horizontal">\n\
-                                {{#items}}\n\
-                                    <dt class="text-primary">{{ createdBy }}</dt>\n\
-                                    <dd>\n\
-                                        <div col="row">\n\
-                                            <div class="col-lg-12">{{#enhance}}{{ content }}{{/enhance}}</div>\n\
-                                        </div>\n\
-                                        <div col="row">\n\
-                                            <div class="col-lg-12 text-muted right"><em>{{#formatDate}}{{ createdAt.date }}{{/formatDate}}</em></div>\n\
-                                        </div>\n\
-                                    </dd>\n\
-                                {{/items}}\n\
-                                {{^items}}\n\
-                                <div class="alert alert-info">List is empty.</div>\n\
-                                {{/items}}\n\
-                            </dl>';
+    var tmpl = '\
+        {{#items.0}}<dl class="dl-horizontal">{{/items.0}}\n\
+            {{#items}}\n\
+                <dt class="text-primary">{{ createdBy }}</dt>\n\
+                <dd>\n\
+                    <div col="row">\n\
+                        <div class="col-lg-12">{{#enhance}}{{ content }}{{/enhance}}</div>\n\
+                    </div>\n\
+                    <div col="row">\n\
+                        <div class="col-lg-12 text-muted right">\n\
+                            <em>{{#formatDate}}{{ createdAt.date }}{{/formatDate}}</em>\n\
+                        </div>\n\
+                    </div>\n\
+                </dd>\n\
+            {{/items}}\n\
+        {{#items.0}}</dl>{{/items.0}}\n\
+        {{^items}}\n\
+            <div class="alert alert-info">\n\
+                List is empty.\n\
+            </div>\n\
+        {{/items}}\n\
+    ';
 
     return Mustache.render(tmpl, data);
 }
 
 function getAssignees(data) {
-    var tmpl = '<ul class="list-unstyled">\n\
-                                {{#items}}\n\
-                                <li class="text-muted row">\n\
-                                    <div class="col-md-9">{{ usernameCanonical }}</div>\n\
-                                    <div class="col-md-3">\n\
-                                    <i class="fa-user fa fa-fw"></i>\n\
-                                </div>\n\
-                                {{/items}}\n\
-                            </li>'
-            ;
+
+    var tmpl = '\
+        {{#items.0}}<ul class="list-unstyled">{{/items.0}}\n\
+            {{#items}}\n\
+            <li class="text-muted row">\n\
+                <div class="col-md-9">{{ usernameCanonical }}</div>\n\
+                <div class="col-md-3">\n\
+                <i class="fa-user fa fa-fw"></i>\n\
+            </div>\n\
+            {{/items}}\n\
+        {{#items.0}}</li>{{/items.0}}\n\
+        {{^items}}\n\
+            <div class="alert alert-warning">\n\
+                List is empty.\n\
+            </div>\n\
+        {{/items}}\n\
+    ';
 
     return Mustache.render(tmpl, data);
 }
 
 function getChannels(data) {
 
-    var tmpl = '<ul class="nav nav-tabs">\n\
-                                {{#items}}\n\
-                                <li role="presentation">\n\
-                                    <a role="tab" data-toggle="tab" href="#{{ id }}">\n\
-                                        {{ name }}\n\
-                                        &nbsp;&nbsp;\n\
-                                        <span class="leave-channel" title="Leave the channel">\n\
-                                            <i class="fa-times-circle fa fa-lg"></i>\n\
-                                        </span>\n\
-                                    </a>\n\
-                                 </li>\n\
-                                {{/items}}\n\
-                             </ul>';
+    var tmpl = '\
+        {{#items.0}}<ul class="nav nav-tabs">{{/items.0}}\n\
+            {{#items}}\n\
+                <li role="presentation">\n\
+                    <a role="tab" data-toggle="tab" href="#{{ id }}">\n\
+                        {{ name }}&nbsp;&nbsp;\n\
+                        <span class="leave-channel" title="Leave the channel">\n\
+                            <i class="fa-times-circle fa fa-lg"></i>\n\
+                        </span>\n\
+                    </a>\n\
+                </li>\n\
+            {{/items}}\n\
+        {{#items.0}}</ul>{{/items.0}}\n\
+        {{^items}}\n\
+            <div class="alert alert-warning">\n\
+                List is empty.\n\
+            </div>\n\
+        {{/items}}\n\
+    ';
 
     return Mustache.render(tmpl, data);
 }
@@ -212,34 +231,31 @@ function getUsers(data) {
         };
     };
 
-    var tmpl = '<ul class="list-unstyled">\n\
-                        {{#items}}\n\
-                                {{ #online }}\n\
-                                <a href="{{#url}}{{id}}{{/url}}" class="text-success">\n\
-                                <li class="row">\n\
-                                    <div class="col-md-3">\n\
-                                        <img src="{{ image }}&d={{ #defimg }}{{ /defimg }}" alt="{{ username }}" alt="{{ username }}" class="img-circle"/>\n\
-                                    </div>\n\
-                                    <div class="col-md-6"><strong>{{ username }}</strong></div>\n\
-                                    <div class="col-md-3"><i class="fa-circle fa fa-fw" aria-hidden="true"></i></div>\n\
-                                </li>\n\
-                                </a>\n\
-                            {{ /online }}\n\
-                            \n\
-                            {{ ^online }}\n\
-                                <a href="{{#url}}{{id}}{{/url}}" class="text-muted">\n\
-                                <li class="row">\n\
-                                    <div class="col-md-3">\n\
-                                        <img src="{{ image }}&d={{ #defimg }}{{ /defimg }}" alt="{{ username }}" title="{{ username }}" class="img-circle"/>\n\
-                                    </div>\n\
-                                    <div class="col-md-6">{{ username }}</div>\n\
-                                    <div class="col-md-3"><i class="fa-circle-o fa fa-fw" aria-hidden="true"></i></div>\n\
-                                </li>\n\
-                                </a>\n\
-                            {{ /online }}\n\
-                        {{/items}}\n\
-                        </ul>'
-            ;
+    var tmpl = '\
+        {{#items.0}}<ul class="list-unstyled">{{/items.0}}\n\
+            {{#items}}\n\
+                <a href="{{#url}}{{id}}{{/url}}" class="{{#online}}text-success{{/online}}{{^online}}text-muted{{/online}}">\n\
+                    <li class="row">\n\
+                        <div class="col-md-3">\n\
+                            <img src="{{ image }}&d={{ #defimg }}{{ /defimg }}"\n\
+                                 alt="{{ username }}"\n\
+                                 title="{{ username }}"\n\
+                                 class="img-circle"/>\n\
+                        </div>\n\
+                        <div class="col-md-6"><strong>{{ username }}</strong></div>\n\
+                        <div class="col-md-3">\n\
+                            <i class="fa-circle{{^online}}-o{{/online}} fa fa-fw" aria-hidden="true"></i>\n\
+                        </div>\n\
+                    </li>\n\
+                </a>\n\
+            {{/items}}\n\
+        {{#items.0}}</ul>{{/items.0}}\n\
+        {{^items}}\n\
+            <div class="alert alert-warning">\n\
+                List is empty.\n\
+            </div>\n\
+        {{/items}}\n\
+    ';
 
     return Mustache.render(tmpl, data);
 }
