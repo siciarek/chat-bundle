@@ -22,7 +22,7 @@
         "knplabs/knp-paginator-bundle": "dev-master",
         "brandonwamboldt/utilphp": "1.1.*",
         "jms/serializer-bundle": "1.1@dev",
-        "friendsofsymfony/user-bundle": "~1.3",
+        "friendsofsymfony/user-bundle": "dev-master",
         "knplabs/doctrine-behaviors": "dev-master"
     },
     "require-dev": {
