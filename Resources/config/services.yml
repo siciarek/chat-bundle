@@ -2,8 +2,8 @@ services:
     chat.channel:
         class: Siciarek\ChatBundle\Model\ChatChannel
         calls:
-            - [ setContainer, [ @service_container ] ]
+            - [ setContainer, [ "@service_container" ] ]
     chat.message:
         class: Siciarek\ChatBundle\Model\ChatMessage
         calls:
-            - [ setContainer, [ @service_container ] ]
+            - [ setContainer, [ "@service_container" ] ]
