@@ -16,7 +16,7 @@
             "email": "siciarek@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
         "knplabs/knp-paginator-bundle": "dev-master",
